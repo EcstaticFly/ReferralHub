@@ -6,7 +6,7 @@ export default function Navbar() {
   const { user, logout } = authStore();
   return (
     <header
-      className="border-b fixed w-full top-0 z-40 
+      className="border-b fixed w-full top-0
     backdrop-blur-lg"
     >
       <div className="container mx-auto px-4 h-16">

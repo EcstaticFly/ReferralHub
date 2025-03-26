@@ -44,8 +44,9 @@ export const loginUser = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
-    if (!email || !password || !name) {
+    const { email, password, fullName } = req.body;
+    console.log(email, password, fullName);
+    if (!email || !password || !fullName) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
     // if (password.length < 6) {
@@ -57,7 +58,7 @@ export const registerUser = async (req, res) => {
     if (existingBusiness) return res.status(400).json({ message: "Email already in use" });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newBusiness = new Business({ name, email, password: hashedPassword });
+    const newBusiness = new Business({ name: fullName, email, password: hashedPassword });
 
     if (newBusiness) {
       await generateToken(newBusiness._id, res);
@@ -65,7 +66,7 @@ export const registerUser = async (req, res) => {
       return res.status(201).json({
         _id: newBusiness._id,
         email: newBusiness.email,
-        name: newBusiness.name,
+        fullName: newBusiness.name,
         message: "Account created successfully",
       });
     } else {
@@ -91,3 +92,14 @@ export const logoutUser = async (req, res) => {
   }
 };
 
+
+export const checkUser = (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};

@@ -44,7 +44,7 @@ app.use("/api/customer", customerRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reward", rewardRoutes);
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
   connectDB();
 });

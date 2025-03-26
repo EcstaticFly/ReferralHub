@@ -1,6 +1,6 @@
-import Referral from "../models/referral";
-import Campaign from "../models/campaign";
-import {sendBulkEmail} from "../configs/utils";
+import Referral from "../models/referral.js";
+import Campaign from "../models/campaign.js";
+import {sendBulkEmail} from "../configs/utils.js";
 
 export const sendReferralBulk = async (req, res) => {
     const { campaignId, recipientEmails } = req.body;

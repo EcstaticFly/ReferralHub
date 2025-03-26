@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const businessSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -9,6 +9,7 @@ const businessSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Business = mongoose.model('Business', businessSchema);
+// Prevent model overwrite error
+const Business = mongoose.models.Business || mongoose.model("Business", businessSchema);
 
- export default Business;
+export default Business;

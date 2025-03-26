@@ -11,7 +11,7 @@ const initialState = {
   password: "",
 };
 export default function RegisterPage() {
-  const { register, isSendingOtp } = authStore();
+  const { register, isRegistering } = authStore();
   const [formData, setFormData] = useState(initialState);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -152,14 +152,14 @@ export default function RegisterPage() {
               </button>
             </label>
             <button
-              className="bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
+              className="flex flex-row gap-1.5 items-center justify-center bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
               type="submit"
-              disabled={isSendingOtp}
+              disabled={isRegistering}
             >
-              {isSendingOtp ? (
+              {isRegistering ? (
                 <>
                   <Loader className="size-6 animate-spin" />
-                  <span className="font-semibold">Sending OTP...</span>
+                  <span className="font-semibold">Registering...</span>
                 </>
               ) : (
                 "Register"

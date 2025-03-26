@@ -91,7 +91,7 @@ export default function LoginPage() {
               </button>
             </label>
             <button
-              className="bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
+              className="flex flex-row gap-1.5 items-center justify-center bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
               type="submit"
               disabled={isLoggingIn}
             >

@@ -1,6 +1,6 @@
 import express from "express";
 import { verifyjwt } from "../middlewares/checkAuth.js";
-import { sendReferralBulk, getReferrals } from "../controllers/referralController.js";
+import { sendReferralBulk, getReferrals, updateReferralStatus } from "../controllers/referralController.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import Campaign from "../models//campaign";
+import Campaign from "../models/campaign.js";
 
 export const createCampaign = async (req, res) => {
     try {
