@@ -6,11 +6,11 @@ export const authStore = create((set, get) => ({
   user: null,
   isLoggingIn: false,
   isLoading: true,
-  isSendingOtp: false,
+  isSendingMessage: false,
 
   checkAuth: async () => {
     try {
-      const response = await axiosInstance.get("/auth/check");
+      const response = await axiosInstance.get("/business/check");
       set({ user: response.data });
     } catch (error) {
       console.log(error);
@@ -23,7 +23,7 @@ export const authStore = create((set, get) => ({
   register: async (formData) => {
     set({ isRegistering: true });
     try {
-      const response = await axiosInstance.post("/auth/register", formData);
+      const response = await axiosInstance.post("/business/register", formData);
       set({ user: response.data });
       toast.success(response.data.message);
     } catch (e) {
@@ -37,7 +37,7 @@ export const authStore = create((set, get) => ({
   login: async (formData) => {
     set({ isLoggingIn: true });
     try {
-      const response = await axiosInstance.post("/auth/login", formData);
+      const response = await axiosInstance.post("/business/login", formData);
       set({ user: response.data });
       toast.success(response.data.message);
     } catch (e) {
@@ -50,7 +50,7 @@ export const authStore = create((set, get) => ({
 
   logout: async () => {
     try {
-      const response = await axiosInstance.post("/auth/logout");
+      const response = await axiosInstance.post("/business/logout");
       toast.success(response.data.message);
       set({ user: null });
 

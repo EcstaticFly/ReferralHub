@@ -1,9 +1,7 @@
 import { generateToken } from "../configs/utils.js";
-import User from "../models/user.js";
 import bcrypt from "bcryptjs";
-import randomstring from "randomstring";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import Business from "../models/business.js";
 dotenv.config();
 
 export const loginUser = async (req, res) => {
@@ -14,22 +12,27 @@ export const loginUser = async (req, res) => {
         .status(400)
         .json({ message: "Please provide both email and password" });
     }
-    const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ message: "Invalid Credentials" });
-      }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid Credentials" });
-      }
-      await generateToken(user._id, res);
-      res.status(201).json({
-        _id: user._id,
-        email: user.email,
-        fullName: user.fullName,
-        profilePic: user.profilePic,
-        message: "Logged in successfully",
-      });
+    const business = await Business.findOne({ email })
+      .populate("customers") // Fetch linked customers
+      .populate("campaigns"); // Fetch linked campaigns
+      
+    if (!business) return res.status(400).json({ message: "Business not found" });
+
+    const isMatch = await bcrypt.compare(password, business.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    await generateToken(business._id, res);
+
+    res.json({
+      message: "Login successful",
+      business: {
+        id: business._id,
+        name: business.name,
+        email: business.email,
+        customers: business.customers, // Now includes customers
+        campaigns: business.campaigns, // Now includes campaigns
+      },
+    });
     
   } catch (e) {
     console.log(e.message);
@@ -41,35 +44,28 @@ export const loginUser = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, fullName } = req.body;
-    if (!email || !password || !fullName) {
+    const { email, password, name } = req.body;
+    if (!email || !password || !name) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters long" });
-    }
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
-    }
+    // if (password.length < 6) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Password must be at least 6 characters long" });
+    // }
+    const existingBusiness = await Business.findOne({ email });
+    if (existingBusiness) return res.status(400).json({ message: "Email already in use" });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      fullName,
-    });
+    const newBusiness = new Business({ name, email, password: hashedPassword });
 
-    if (newUser) {
-      await generateToken(newUser._id, res);
-      await newUser.save();
+    if (newBusiness) {
+      await generateToken(newBusiness._id, res);
+      await newBusiness.save();
       return res.status(201).json({
-        _id: newUser._id,
-        email: newUser.email,
-        fullName: newUser.fullName,
-        profilePic: newUser.profilePic,
+        _id: newBusiness._id,
+        email: newBusiness.email,
+        name: newBusiness.name,
         message: "Account created successfully",
       });
     } else {
@@ -85,9 +81,8 @@ export const registerUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
-    res.clearCookie("token").status(200).json({
-      message: "Logged out successfully!",
-    });
+    res.cookie("token", "", { maxAge: 0 });
+    res.json({ message: "Logout successful" });
   } catch (e) {
     console.log(e.message);
     res.status(500).json({
@@ -96,13 +91,3 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-export const checkUser = (req, res) => {
-  try {
-    res.status(200).json(req.user);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-};

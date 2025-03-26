@@ -202,7 +202,7 @@ export default function Navbar() {
                   ></path>
                 </svg>
               </div>
-              <h1 className="text-lg font-bold">Chatzy</h1>
+              <h1 className="text-lg font-bold">ReferralHub</h1>
             </Link>
           </div>
 

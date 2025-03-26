@@ -72,13 +72,13 @@ export default function RegisterPage() {
                 <MessageSquare className="size-6 text-primary" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Create Account</h1>
-              <p className="text-base-content/60">
+              <p className="">
                 Get started with your free account
               </p>
             </div>
           </div>
           <form onSubmit={handleSubmit} className="space-y-7">
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="border-2 rounded-lg p-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -89,7 +89,7 @@ export default function RegisterPage() {
               </svg>
               <input
                 type="text"
-                className="grow"
+                className="grow p-1 outline-none"
                 placeholder="Full name"
                 value={formData.fullName}
                 onChange={(event) => {
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                 }}
               />
             </label>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="border-2 rounded-lg p-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -109,7 +109,7 @@ export default function RegisterPage() {
               </svg>
               <input
                 type="email"
-                className="grow"
+                className="grow p-1 outline-none"
                 placeholder="Email"
                 value={formData.email}
                 onChange={(event) => {
@@ -117,7 +117,7 @@ export default function RegisterPage() {
                 }}
               />
             </label>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="border-2 rounded-lg p-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -132,7 +132,7 @@ export default function RegisterPage() {
               </svg>
               <input
                 type={`${showPassword ? "text" : "password"}`}
-                className="grow"
+                className="grow p-1 outline-none"
                 placeholder="Password"
                 value={formData.password}
                 onChange={(event) => {
@@ -141,18 +141,18 @@ export default function RegisterPage() {
               />
               <button
                 type="button"
-                className="h-4 w-4 "
+                className="h-4 w-4 mr-3"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="size-5 text-base-content/40" />
+                  <EyeOff className="size-5" />
                 ) : (
                   <Eye className="size-5 text-base-content/40" />
                 )}
               </button>
             </label>
             <button
-              className="btn btn-primary w-full"
+              className="bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
               type="submit"
               disabled={isSendingOtp}
             >
@@ -167,9 +167,9 @@ export default function RegisterPage() {
             </button>
           </form>
           <div className="text-center">
-            <p className="text-base-content/60">
+            <p className="text-gray-700">
               Already have an account?{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="text-blue-500 underline">
                 Sign in
               </Link>
             </p>

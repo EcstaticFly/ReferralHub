@@ -26,17 +26,17 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
-              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 ">
-                <MessageSquare className="size-6 text-primary" />
+              <div className="size-12 rounded-xl flex items-center justify-center ">
+                <MessageSquare className="size-6 " />
               </div>
               <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
-              <p className="text-base-content/60">
+              <p className="">
                 Login to your account
               </p>
             </div>
           </div>
           <form onSubmit={handleSubmit} className="space-y-7">
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="border-2 rounded-lg p-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -48,7 +48,7 @@ export default function LoginPage() {
               </svg>
               <input
                 type="text"
-                className="grow"
+                className="grow p-1 outline-none"
                 placeholder="Email"
                 value={formData.email}
                 onChange={(event) => {
@@ -56,7 +56,7 @@ export default function LoginPage() {
                 }}
               />
             </label>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="border-2 rounded-lg p-2 flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -71,7 +71,7 @@ export default function LoginPage() {
               </svg>
               <input
                 type={`${showPassword ? "text" : "password"}`}
-                className="grow"
+                className="grow p-1 outline-none"
                 placeholder="Password"
                 value={formData.password}
                 onChange={(event) => {
@@ -80,18 +80,18 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                className="h-4 w-4 "
+                className="h-4 w-4 mr-3"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="size-5 text-base-content/40" />
+                  <EyeOff className="size-5" />
                 ) : (
-                  <Eye className="size-5 text-base-content/40" />
+                  <Eye className="size-5" />
                 )}
               </button>
             </label>
             <button
-              className="btn btn-primary w-full"
+              className="bg-gradient-to-b from-black/85 to-black/55 text-white rounded-full p-2 cursor-pointer  w-full"
               type="submit"
               disabled={isLoggingIn}
             >
@@ -106,9 +106,9 @@ export default function LoginPage() {
             </button>
           </form>
           <div className="text-center">
-            <p className="text-base-content/60">
+            <p className="text-gray-700">
               Don't have an account?{" "}
-              <Link to="/register" className="link link-primary">
+              <Link to="/register" className="text-blue-500 underline">
                 Create Account
               </Link>
             </p>
