@@ -53,19 +53,6 @@ export const deleteCampaign = async (req, res) => {
   }
 };
 
-export const getActiveCampaigns = async (req, res) => {
-    try {
-      const campaigns = await Campaign.find({
-        businessId: req.business.id,
-        expiresAt: { $gte: new Date() }, // Fetch only active campaigns
-      });
-  
-      res.json(campaigns);
-    } catch (error) {
-      res.status(500).json({ message: "Server error" });
-    }
-  };
-
   export const checkAndExpireCampaigns = async () => {
     try {
       await Campaign.updateMany(

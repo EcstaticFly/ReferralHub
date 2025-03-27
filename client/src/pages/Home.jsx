@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   X,
@@ -14,7 +14,7 @@ import Dashboard from "../components/Dashboard";
 import Campaigns from "../components/Campaigns";
 import Customers from "../components/Customers";
 import { authStore } from "../store/authStore";
-import {AnimatePresence, motion} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const menuItems = [
   {
@@ -31,72 +31,88 @@ const menuItems = [
 ];
 
 const HomePage = () => {
-  const { logout } = authStore();
-  const [activeComponent, setActiveComponent] = useState("Dashboard");
+  const { logout, user } = authStore();
+  const [activeComponent, setActiveComponent] = useState(() => {
+    return localStorage.getItem("activeComponent") || "Dashboard";
+  });
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  // Retrieve active component from localStorage on mount
+  useEffect(() => {
+    const storedComponent = localStorage.getItem("activeComponent");
+    if (storedComponent) {
+      setActiveComponent(storedComponent);
+    }
+  }, []);
+
+  // Update localStorage whenever activeComponent changes
+  useEffect(() => {
+    localStorage.setItem("activeComponent", activeComponent);
+  }, [activeComponent]);
+  
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
     setSidebarOpen(false);
   };
 
-  
   const ChatbotContainer = () => (
     <AnimatePresence mode="wait">
       <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ type: "tween", duration: 0.3 }}
-      className="
-      fixed bottom-24 right-6 
-      w-80 bg-white dark:bg-gray-800 
-      rounded-lg shadow-2xl 
-      border dark:border-gray-700
-    "
-    >
-      <div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ type: "tween", duration: 0.3 }}
         className="
-        bg-blue-600 text-white 
-        p-4 flex justify-between items-center 
-        rounded-t-lg
-      "
-      >
-        <h3 className="font-semibold">AI Chatbot</h3>
-        <button
-          onClick={() => setIsChatbotOpen(false)}
-          className="hover:bg-blue-700 p-1 rounded-full"
-        >
-          <X size={20} />
-        </button>
-      </div>
-      <div className="p-4 h-64 overflow-y-auto">
-        <p className="text-gray-600 dark:text-gray-300">
-          Chat functionality to be implemented
-        </p>
-      </div>
-      <div className="p-4 border-t dark:border-gray-700 flex space-x-2">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          className="
-            flex-1 p-2 rounded 
-            bg-gray-100 dark:bg-gray-700 
-            dark:text-white
-          "
-        />
-        <button
-          className="
-          bg-blue-600 text-white 
-          p-2 rounded 
-          hover:bg-blue-700
+          fixed bottom-24 right-6 
+          w-80 bg-white dark:bg-gray-800 
+          rounded-lg shadow-2xl 
+          border dark:border-gray-700
         "
+      >
+        <div
+          className="
+            bg-blue-600 text-white 
+            p-4 flex justify-between items-center 
+            rounded-t-lg
+          "
         >
-          <Send size={20} />
-        </button>
-      </div>
-    </motion.div>
+          <h3 className="font-semibold">AI Chatbot</h3>
+          <button
+            onClick={() => setIsChatbotOpen(false)}
+            className="hover:bg-blue-700 p-1 rounded-full"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-4 h-64 overflow-y-auto">
+          <p className="text-gray-600 dark:text-gray-300">
+            Chat functionality to be implemented
+          </p>
+        </div>
+        <div className="p-4 border-t dark:border-gray-700 flex space-x-2">
+          <input
+            type="text"
+            placeholder="Type your message..."
+            className="
+              flex-1 p-2 rounded 
+              bg-gray-100 dark:bg-gray-700 
+              dark:text-white
+            "
+          />
+          <button
+            className="
+              bg-blue-600 text-white 
+              p-2 rounded 
+              hover:bg-blue-700
+            "
+          >
+            <Send size={20} />
+          </button>
+        </div>
+      </motion.div>
     </AnimatePresence>
   );
 
@@ -117,7 +133,7 @@ const HomePage = () => {
             <X className="text-gray-600 dark:text-gray-300" size={24} />
           </button>
         </div>
-        
+
         {/* Menu Items */}
         <nav className="flex flex-col p-4 space-y-4">
           {menuItems.map((item) => (
@@ -143,21 +159,21 @@ const HomePage = () => {
         </nav>
 
         <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-        <button
+          <button
             className="bg-red-800 flex w-full items-center gap-3 p-3 text-left rounded transition duration-200 text-white hover:bg-red-700 cursor-pointer"
             onClick={logout}
           >
-            <LogOut className="size-5" />
-            <span className="">Logout</span>
+            <LogOut size={20} />
+            <span>Logout</span>
           </button>
         </div>
-        
+
         {/* Business Name & Email */}
         <div className="absolute bottom-26 left-4 right-4 flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
           <User size={24} className="text-gray-600 dark:text-gray-300" />
           <div>
-            <p className="text-sm font-medium text-gray-800 dark:text-white">Business Name</p>
-            <p className="text-xs text-gray-600 dark:text-gray-300">email@example.com</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-white">{user?.name}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">{user?.email}</p>
           </div>
         </div>
       </div>

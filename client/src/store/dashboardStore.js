@@ -9,7 +9,7 @@ export const dashboardStore = create((set) => ({
   fetchStats: async () => {
     set({ isLoading: true });
     try {
-      const response = await axiosInstance.get("/dashboard");
+      const response = await axiosInstance.get("/dashboard/");
       set({ stats: response.data });
     } catch (error) {
       console.error(error);

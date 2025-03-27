@@ -67,7 +67,7 @@ export const registerUser = async (req, res) => {
         _id: newBusiness._id,
         email: newBusiness.email,
         businessType: newBusiness.businessType,
-        fullName: newBusiness.name,
+        name: newBusiness.name,
         message: "Account created successfully",
       });
     } else {

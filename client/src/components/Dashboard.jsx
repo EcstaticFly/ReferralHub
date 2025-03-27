@@ -1,86 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Users,
   TrendingUp,
   Megaphone,
   User as UserIcon,
 } from "lucide-react";
-
-const recentReferrals = [
-  {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    timestamp: "2 hours ago",
-  },
-  {
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    timestamp: "5 hours ago",
-  },
-  {
-    name: "Mike Johnson",
-    email: "mike.johnson@example.com",
-    timestamp: "1 day ago",
-  },
-];
+import { dashboardStore } from "../store/dashboardStore";
+import MetricCard from "./MetricCard";
+import ReferralItem from "./ReferralItem";
 
 const Dashboard = () => {
-
-  const MetricCard = ({ icon, title, value, color }) => (
-    <div
-      className={`
-      bg-white dark:bg-gray-800 
-      rounded-lg shadow-md p-6 
-      flex items-center space-x-4
-      hover:shadow-lg transition-shadow
-    `}
-    >
-      <div
-        className={`
-        p-3 rounded-full 
-        ${color} 
-        bg-opacity-20 
-        flex items-center justify-center
-      `}
-      >
-        {icon}
-      </div>
-      <div>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">{title}</p>
-        <h3 className="text-2xl font-bold dark:text-white">{value}</h3>
-      </div>
-    </div>
-  );
-
-  const ReferralItem = ({ name, email, timestamp }) => (
-    <div
-      className="
-      flex items-center justify-between 
-      bg-white dark:bg-gray-800 
-      p-4 rounded-lg 
-      shadow-sm hover:shadow-md 
-      transition-shadow
-    "
-    >
-      <div className="flex items-center space-x-4">
-        <div
-          className="
-          bg-blue-100 dark:bg-blue-900 
-          p-2 rounded-full
-        "
-        >
-          <UserIcon className="text-blue-600 dark:text-blue-300" size={24} />
-        </div>
-        <div>
-          <p className="font-semibold dark:text-white">{name}</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">{email}</p>
-        </div>
-      </div>
-      <span className="text-xs text-gray-400 dark:text-gray-500">
-        {timestamp}
-      </span>
-    </div>
-  );
+  const { stats , fetchStats} = dashboardStore();
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   return (
     <div className="space-y-6 p-2">
@@ -89,32 +22,37 @@ const Dashboard = () => {
         <MetricCard
           icon={<Users size={32} className="text-white" />}
           title="Total Referrals"
-          value="1,254"
+          value={stats?.totalReferrals}
           color="bg-blue-600"
         />
         <MetricCard
           icon={<TrendingUp size={32} className="text-white" />}
           title="Conversion Rate"
-          value="24.5%"
+          value={`${ stats?.totalReferrals !==0 ? ((stats?.successfulReferrals / stats?.totalReferrals) * 100).toFixed(2) : 0}%`}
           color="bg-green-600"
         />
         <MetricCard
           icon={<Megaphone size={32} className="text-white" />}
-          title="Active Campaigns"
-          value="12"
+          title="Total Campaigns"
+          value={stats?.totalCampaigns}
           color="bg-purple-600"
         />
       </div>
 
-      {/* Recent Referrals */}
       <div>
         <h2 className="text-xl font-bold mb-4 dark:text-white">
           Recent Referrals
         </h2>
         <div className="space-y-4">
-          {recentReferrals.map((referral, index) => (
-            <ReferralItem key={index} {...referral} />
-          ))}
+        {
+          stats?.mostRecentReferrals && stats?.mostRecentReferrals.length > 0 ? (
+            stats?.mostmostRecentReferrals.map((referral, index) => (
+              <ReferralItem key={index} {...referral} />
+            ))
+          ) : (
+            <p className="text-center text-gray-500 dark:text-gray-400">No recent referrals found.</p>
+          )
+        }
         </div>
       </div>
     </div>
