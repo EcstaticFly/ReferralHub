@@ -59,17 +59,4 @@ export const authStore = create((set, get) => ({
       toast.error(e.response.data.message);
     }
   },
-
-  sendOtp: async (formData) => {
-    set({ isRegistering: true });
-    try {
-      const response = await axiosInstance.post("/auth/sendOtp", formData);
-      toast.success(response.data.message);
-    } catch (e) {
-      console.log(e);
-      toast.error(e.response.data.message);
-    } finally {
-      set({ isRegistering: false });
-    }
-  }
 }));

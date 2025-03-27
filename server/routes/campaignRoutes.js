@@ -7,7 +7,6 @@ router.post("/create", verifyjwt, createCampaign);
 router.get("/list/all", verifyjwt, getAllCampaigns);
 router.put("/update/:id", verifyjwt, updateCampaign);
 router.delete("/:id", verifyjwt, deleteCampaign);
-router.post("/create", verifyjwt, createCampaign);
 router.get("/list/active", verifyjwt, getActiveCampaigns);
 
 

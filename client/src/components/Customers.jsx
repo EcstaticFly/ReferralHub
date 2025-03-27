@@ -113,10 +113,10 @@ const Customers = () => {
     ">
       <div className="flex items-center space-x-4">
         <div className="
-          bg-blue-100 dark:bg-blue-900 
+          bg-blue-100 dark:bg-blue-900
           p-2 rounded-full
         ">
-          <UserIcon className="text-blue-600 dark:text-blue-300" size={24} />
+          <UserIcon className="text-white" size={24} />
         </div>
         <div>
           <p className="font-semibold dark:text-white">{name}</p>
@@ -177,13 +177,13 @@ const Customers = () => {
       {/* Metrics Cards */}
       <div className="grid md:grid-cols-2 gap-6">
         <MetricCard 
-          icon={<Users size={32} className="text-blue-600" />}
+          icon={<Users size={32} className="text-white" />}
           title="Total Customers"
           value={customers.length}
           color="bg-blue-600"
         />
         <MetricCard 
-          icon={<TrendingUp size={32} className="text-green-600" />}
+          icon={<TrendingUp size={32} className="text-white" />}
           title="Avg. Conversion Rate"
           value={`${(customers.reduce((sum, c) => sum + c.conversionRate, 0) / customers.length).toFixed(1)}%`}
           color="bg-green-600"
