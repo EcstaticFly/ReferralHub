@@ -31,7 +31,7 @@ export const campaignStore = create((set, get) => ({
       set({ campaigns: [...get().campaigns, response.data.campaign] });
     } catch (error) {
       console.error(error);
-      toast.error("Failed to create campaign");
+      toast.error(error.response.data.message);
     } finally {
       set({ isCreating: false });
     }

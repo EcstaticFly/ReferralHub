@@ -1,8 +1,13 @@
-import React, { useState } from "react";
-import { Plus, Filter, Sparkles, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Plus, Filter, Sparkles, Trash2, Edit } from "lucide-react";
+import { campaignStore } from "../store/campaignStore";
+import { formatMessageTime } from "../configs/utils";
+
 
 const Campaigns = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingCampaignId, setEditingCampaignId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -12,6 +17,20 @@ const Campaigns = () => {
     rewardValue: "",
     campaignMessage: "",
   });
+
+  const {
+    campaigns,
+    fetchCampaigns,
+    createCampaign,
+    updateCampaign,
+    deleteCampaign,
+    isCreating,
+    isUpdating,
+    isDeleting,
+  } = campaignStore();
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,49 +43,67 @@ const Campaigns = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Submitting Campaign:", formData);
+    if (isEditing) {
+      console.log("Updating Campaign:", { id: editingCampaignId, ...formData });
+      updateCampaign(editingCampaignId, formData);
+    } else {
+      console.log("Submitting Campaign:", formData);
+      await createCampaign(formData);
+    }
+    closeModal();
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingCampaignId(null);
+    setFormData({
+      name: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      rewardType: "discount",
+      rewardValue: "",
+      campaignMessage: "",
+    });
+  };
 
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const handleEdit = (campaign) => {
+    setFormData({
+      name: campaign.name,
+      description: campaign.description,
+      // Convert ISO date to "yyyy-MM-dd" format
+      startDate: new Date(campaign.startDate).toISOString().split("T")[0],
+      endDate: new Date(campaign.endDate).toISOString().split("T")[0],
+      rewardType: campaign.rewardType,
+      rewardValue: campaign.rewardValue,
+      campaignMessage: campaign.campaignMessage,
+    });
+    setIsEditing(true);
+    setEditingCampaignId(campaign._id);
+    setIsModalOpen(true);
+  };
+  
 
-  const campaigns = [
-    {
-      name: "Summer Referral Program",
-      startDate: "2024-05-31",
-      endDate: "2025-08-30",
-      referrals: 245,
-      conversion: "32%",
-      roi: "287%",
-      description: "Increase reward by 10% to boost conversion rates during peak season",
-    },
-    {
-      name: "Early Bird Special",
-      startDate: "2024-04-30",
-      endDate: "2024-05-30",
-      referrals: 123,
-      conversion: "28%",
-      roi: "287%",
-      description: "Consider extending campaign duration based on positive engagement",
-    },
-  ];
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="p-6 bg-gray-900 text-white min-h-screen">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h2 className="text-3xl font-semibold">Your Referral Campaigns</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setIsModalOpen(true);
+            setIsEditing(false);
+          }}
           className="flex items-center bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           <Plus className="mr-2" /> Create Campaign
         </button>
       </div>
-
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-4">
         <input
           type="text"
           placeholder="Search campaigns..."
@@ -77,53 +114,109 @@ const Campaigns = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {campaigns.map((campaign, index) => {
-          const isActive = new Date(campaign.endDate) >= new Date();
-          return (
-            <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-lg">
-              <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold">{campaign.name}</h3>
-                <span className={`px-2 py-1 rounded-lg ${isActive ? "bg-green-600" : "bg-red-600"}`}>
-                  {isActive ? "Active" : "Inactive"}
-                </span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {campaigns && campaigns.length > 0 ? (
+          campaigns.map((campaign) => {
+            const isActive = new Date(campaign.endDate) >= new Date();
+            return (
+              <div
+                key={campaign._id}
+                className="bg-gray-800 p-4 rounded-lg shadow-lg"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-bold">{campaign?.name}</h3>
+                  <span
+                    className={`px-2 py-1 rounded-lg text-xs ${
+                      isActive ? "bg-green-600" : "bg-red-600"
+                    }`}
+                  >
+                    {isActive ? "Active" : "Completed"}
+                  </span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  {formatMessageTime(campaign?.startDate)} - {formatMessageTime(campaign?.endDate)}
+                </p>
+                <div className="flex justify-between mt-4">
+                  <div className="flex flex-col items-center">
+                    <span className="text-sm text-gray-400">Referrals</span>
+                    <span className="text-lg font-semibold text-blue-400">
+                      {campaign?.referralCount}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-sm text-gray-400">Type</span>
+                    <span className="text-md font-semibold text-green-400">
+                      {campaign?.rewardType}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-sm text-gray-400">Reward</span>
+                    <span className="text-lg font-semibold text-purple-400">
+                      {campaign.rewardValue}%
+                    </span>
+                  </div>
+                </div>
+                <p className="mt-2 text-gray-400 text-sm">
+                  {campaign.description}
+                </p>
+                <div className="flex justify-evenly gap-2 mt-2">
+                  <button
+                    onClick={() => handleEdit(campaign)}
+                    className="text-yellow-400 hover:text-yellow-600 cursor-pointer"
+                  >
+                    <Edit size={20} />
+                  </button>
+                  <button className="text-red-400 hover:text-red-600 cursor-pointer">
+                    <Trash2 size={20} />
+                  </button>
+                </div>
               </div>
-              <p className="text-gray-400 text-sm">
-                {campaign.startDate} - {campaign.endDate}
-              </p>
-              <div className="flex justify-between mt-2">
-                <p>Referrals: {campaign.referrals}</p>
-                <p>Conversion: {campaign.conversion}</p>
-                <p>ROI: {campaign.roi}</p>
-              </div>
-              <p className="mt-2 text-gray-400">{campaign.description}</p>
-              <button className="mt-2 text-red-400 hover:text-red-600">
-                <Trash2 />
-              </button>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <p className="col-span-full text-center text-gray-400">
+            No campaigns found.
+          </p>
+        )}
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 backdrop-blur-xs bg-opacity-20 flex justify-center items-center">
-          <div className="bg-gray-800 p-6 rounded-lg w-1/3">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
+          <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg">
             <div className="flex justify-between mb-4">
-              <h2 className="text-2xl">Create Campaign</h2>
-              <button onClick={closeModal} className="text-red-400">✖</button>
+              <h2 className="text-2xl">
+                {isEditing ? "Edit Campaign" : "Create Campaign"}
+              </h2>
+              <button onClick={closeModal} className="text-red-400 text-2xl">
+                &times;
+              </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" name="name" placeholder="Campaign Name" value={formData.name} onChange={handleChange} className="w-full p-2 bg-gray-700 rounded" required />
-              <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="w-full p-2 bg-gray-700 rounded" required></textarea>
-              <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Campaign Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full p-2 bg-gray-700 rounded"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleChange}
+                className="w-full p-2 bg-gray-700 rounded"
+                required
+              ></textarea>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
                   type="date"
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
-                  min={today} // Prevent selection before today
+                  min={today}
                   className="w-full p-2 bg-gray-700 rounded"
-                  placeholder="Start Date"
                   required
                 />
                 <input
@@ -132,24 +225,49 @@ const Campaigns = () => {
                   value={formData.endDate}
                   onChange={handleChange}
                   className="w-full p-2 bg-gray-700 rounded"
-                  placeholder="End Date"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <select name="rewardType" value={formData.rewardType} onChange={handleChange} className="w-full p-2 bg-gray-700 rounded">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <select
+                  name="rewardType"
+                  value={formData.rewardType}
+                  onChange={handleChange}
+                  className="w-full p-2 bg-gray-700 rounded"
+                >
                   <option value="discount">Discount</option>
                   <option value="payout">Payout</option>
                 </select>
-                <input type="number" name="rewardValue" placeholder="Reward Value(%)" value={formData.rewardValue} onChange={handleChange} className="w-full p-2 bg-gray-700 rounded" required />
+                <input
+                  type="number"
+                  name="rewardValue"
+                  placeholder="Reward Value(%)"
+                  value={formData.rewardValue}
+                  onChange={handleChange}
+                  className="w-full p-2 bg-gray-700 rounded"
+                  required
+                />
               </div>
               <div className="flex items-center gap-2">
-                <input type="text" name="campaignMessage" placeholder="Campaign Message" value={formData.campaignMessage} onChange={handleChange} className="w-full p-2 bg-gray-700 rounded" />
-                <button type="button" onClick={getAISuggestion} className="p-2 bg-blue-600 rounded">
+                <input
+                  type="text"
+                  name="campaignMessage"
+                  placeholder="Campaign Message"
+                  value={formData.campaignMessage}
+                  onChange={handleChange}
+                  className="w-full p-2 bg-gray-700 rounded"
+                />
+                <button
+                  type="button"
+                  onClick={getAISuggestion}
+                  className="p-2 bg-blue-600 rounded"
+                >
                   <Sparkles />
                 </button>
               </div>
-              <button type="submit" className="w-full p-3 bg-green-600 rounded">Create Campaign</button>
+              <button type="submit" className="w-full p-3 bg-green-600 rounded">
+                {isEditing ? "Update Campaign" : "Create Campaign"}
+              </button>
             </form>
           </div>
         </div>

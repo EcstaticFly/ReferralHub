@@ -5,11 +5,13 @@ const campaignSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   rewardType: { type: String, enum: ["discount", "payout"], required: true },
-  referrerReward: { type: Number, required: true },
-  referredReward: { type: Number, required: true },
-  status: { type: String, enum: ["active", "paused", "completed"], default: "active" },
-  expiresAt: { type: Date, required: true },
-  createdAt: { type: Date, default: Date.now },
+  rewardValue: { type: Number, required: true },
+  campaignMessage: { type: String, required: true },
+  endDate: { type: Date, required: true },
+  startDate: { type: Date, default: Date.now },
+},
+{
+  timestamps: true,
 });
 
 // Prevent model overwrite error

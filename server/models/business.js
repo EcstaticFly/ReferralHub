@@ -5,8 +5,8 @@ const businessSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   businessType: { type: String, required: true },
   password: { type: String, required: true }, // Hashed password
-  customers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }],
-  campaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
+  // customers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Customer" }],
+  // campaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
   createdAt: { type: Date, default: Date.now },
 });
 

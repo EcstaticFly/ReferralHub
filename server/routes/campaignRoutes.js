@@ -4,7 +4,7 @@ import { createCampaign, getAllCampaigns, updateCampaign, deleteCampaign } from 
 const router = express.Router();
 
 router.post("/create", verifyjwt, createCampaign);
-router.get("/list/all", verifyjwt, getAllCampaigns);
+router.get("/list", verifyjwt, getAllCampaigns);
 router.put("/update/:id", verifyjwt, updateCampaign);
 router.delete("/:id", verifyjwt, deleteCampaign);
 

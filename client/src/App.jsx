@@ -13,7 +13,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  // console.log(user, "user");
+  console.log(user, "user");
 
   if (isLoading && !user) {
     return (
