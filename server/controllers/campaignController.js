@@ -6,7 +6,7 @@ export const createCampaign = async (req, res) => {
       console.log("hey");
       const { name, description, rewardType, rewardValue ,startDate, endDate, campaignMessage } = req.body;
   
-      if (new Date(endDate) <= new Date()) {
+      if (new Date(endDate) <= new Date() || (new Date(startDate) >= new Date(endDate))) {
         return res.status(400).json({ message: "Expiration date must be in the future" });
       }
   

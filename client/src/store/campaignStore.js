@@ -27,7 +27,6 @@ export const campaignStore = create((set, get) => ({
     try {
       const response = await axiosInstance.post("/campaign/create", campaignData);
       toast.success(response.data.message);
-      // Optionally, add new campaign to state
       set({ campaigns: [...get().campaigns, response.data.campaign] });
     } catch (error) {
       console.error(error);
@@ -42,7 +41,6 @@ export const campaignStore = create((set, get) => ({
     try {
       const response = await axiosInstance.put(`/campaign/update/${id}`, campaignData);
       toast.success("Campaign updated");
-      // Optionally, update the campaign in state
       set({
         campaigns: get().campaigns.map((camp) => (camp._id === id ? response.data : camp)),
       });

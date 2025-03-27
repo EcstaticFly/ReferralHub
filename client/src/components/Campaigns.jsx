@@ -85,6 +85,11 @@ const Campaigns = () => {
     setEditingCampaignId(campaign._id);
     setIsModalOpen(true);
   };
+
+  const handleDelete = (id) => {
+    deleteCampaign(id);
+    closeModal();
+  };
   
 
   const today = new Date().toISOString().split("T")[0];
@@ -157,7 +162,7 @@ const Campaigns = () => {
                   </div>
                 </div>
                 <p className="mt-2 text-gray-400 text-sm">
-                  {campaign.description}
+                  {campaign?.description}
                 </p>
                 <div className="flex justify-evenly gap-2 mt-2">
                   <button
@@ -166,7 +171,7 @@ const Campaigns = () => {
                   >
                     <Edit size={20} />
                   </button>
-                  <button className="text-red-400 hover:text-red-600 cursor-pointer">
+                  <button onClick={()=>handleDelete(campaign._id)} className="text-red-400 hover:text-red-600 cursor-pointer">
                     <Trash2 size={20} />
                   </button>
                 </div>
