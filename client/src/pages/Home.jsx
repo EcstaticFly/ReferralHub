@@ -7,12 +7,15 @@ import {
   Users,
   User,
   LogOut,
+  Send,
+  MessageCircle,
 } from "lucide-react";
 import Dashboard from "../components/Dashboard";
 import Campaigns from "../components/Campaigns";
 import Customers from "../components/Customers";
 import Profile from "../components/Profile";
 import { authStore } from "../store/authStore";
+import { AnimatePresence, motion } from "framer-motion";
 
 const menuItems = [
   {
@@ -33,11 +36,70 @@ const HomePage = () => {
   const { logout } = authStore();
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
     setSidebarOpen(false);
   };
+
+  const ChatbotContainer = () => (
+    <AnimatePresence mode="wait">
+      <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ type: "tween", duration: 0.3 }}
+      className="
+      fixed bottom-24 right-6 
+      w-80 bg-white dark:bg-gray-800 
+      rounded-lg shadow-2xl 
+      border dark:border-gray-700
+    "
+    >
+      <div
+        className="
+        bg-blue-600 text-white 
+        p-4 flex justify-between items-center 
+        rounded-t-lg
+      "
+      >
+        <h3 className="font-semibold">AI Chatbot</h3>
+        <button
+          onClick={() => setIsChatbotOpen(false)}
+          className="hover:bg-blue-700 p-1 rounded-full"
+        >
+          <X size={20} />
+        </button>
+      </div>
+      <div className="p-4 h-64 overflow-y-auto">
+        <p className="text-gray-600 dark:text-gray-300">
+          Chat functionality to be implemented
+        </p>
+      </div>
+      <div className="p-4 border-t dark:border-gray-700 flex space-x-2">
+        <input
+          type="text"
+          placeholder="Type your message..."
+          className="
+            flex-1 p-2 rounded 
+            bg-gray-100 dark:bg-gray-700 
+            dark:text-white
+          "
+        />
+        <button
+          className="
+          bg-blue-600 text-white 
+          p-2 rounded 
+          hover:bg-blue-700
+        "
+        >
+          <Send size={20} />
+        </button>
+      </div>
+    </motion.div>
+    </AnimatePresence>
+  );
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -112,6 +174,20 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <button
+        onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+        className="
+          fixed bottom-6 right-6 
+          bg-blue-600 text-white 
+          p-4 rounded-full 
+          shadow-2xl hover:bg-blue-700 
+          transition-colors
+        "
+      >
+        <MessageCircle size={24} />
+      </button>
+
+      {isChatbotOpen && <ChatbotContainer />}
     </div>
   );
 };
