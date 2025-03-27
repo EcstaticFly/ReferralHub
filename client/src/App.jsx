@@ -6,7 +6,6 @@ import { LoaderCircle } from "lucide-react";
 import HomePage from "./pages/Home.jsx";
 import RegisterPage from "./pages/Register.jsx";
 import LoginPage from "./pages/Login.jsx";
-import ProfilePage from "./pages/Profile.jsx";
 
 function App() {
   const { user, checkAuth, isLoading } = authStore();
@@ -41,10 +40,6 @@ function App() {
         <Route
           path="/login"
           element={user ? <Navigate to="/" /> : <LoginPage />}
-        />
-        <Route
-          path="/profile"
-          element={user ? <ProfilePage /> : <Navigate to="/register" />}
         />
         <Route
           path="*"
