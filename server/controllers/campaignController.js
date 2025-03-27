@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 
 export const createCampaign = async (req, res) => {
     try {
-      console.log("hey");
-      const { name, description, rewardType, rewardValue ,startDate, endDate, campaignMessage } = req.body;
+      // console.log("hey");
+      const { name, description, rewardType, rewardValue ,startDate, endDate, campaignMessage, task } = req.body;
   
       if (new Date(endDate) <= new Date() || (new Date(startDate) >= new Date(endDate))) {
         return res.status(400).json({ message: "Expiration date must be in the future" });
@@ -19,8 +19,9 @@ export const createCampaign = async (req, res) => {
         startDate,
         endDate,
         campaignMessage,
+        task
       });
-      console.log("hey2");
+      // console.log("hey2");
   
       await campaign.save();
       res.status(201).json({ message: "Campaign created successfully", campaign });
@@ -56,7 +57,7 @@ export const createCampaign = async (req, res) => {
           },
         },
       ]);
-      console.log(campaigns);
+      // console.log(campaigns);
       res.json(campaigns);
     } catch (error) {
       console.error(error);

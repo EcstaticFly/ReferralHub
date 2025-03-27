@@ -17,7 +17,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 p-2">
-      {/* Metrics Cards */}
       <div className="grid md:grid-cols-3 gap-6">
         <MetricCard
           icon={<Users size={32} className="text-white" />}
@@ -46,7 +45,7 @@ const Dashboard = () => {
         <div className="space-y-4">
         {
           stats?.mostRecentReferrals && stats?.mostRecentReferrals.length > 0 ? (
-            stats?.mostmostRecentReferrals.map((referral, index) => (
+            stats?.mostRecentReferrals.map((referral, index) => (
               <ReferralItem key={index} {...referral} />
             ))
           ) : (

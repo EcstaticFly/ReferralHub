@@ -5,6 +5,7 @@ const campaignSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   rewardType: { type: String, enum: ["discount", "payout"], required: true },
+  task: { type: String, required: true},
   rewardValue: { type: Number, required: true },
   campaignMessage: { type: String, required: true },
   endDate: { type: Date, required: true },

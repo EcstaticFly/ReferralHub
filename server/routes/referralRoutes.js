@@ -1,10 +1,11 @@
 import express from "express";
 import { verifyjwt } from "../middlewares/checkAuth.js";
-import { sendReferralBulk, getReferrals, updateReferralStatus } from "../controllers/referralController.js";
+import { sendReferralBulk, showReferralDetails  ,getReferrals, updateReferralStatus } from "../controllers/referralController.js";
 
 const router = express.Router();
 
 router.get("/list", verifyjwt, getReferrals);
+router.get("/:id", verifyjwt, showReferralDetails);
 router.put("/update/:id", verifyjwt, updateReferralStatus);
 router.post("/send-bulk", verifyjwt, sendReferralBulk);
 

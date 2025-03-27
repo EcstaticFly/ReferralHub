@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Plus, Filter, Sparkles, Trash2, Edit } from "lucide-react";
 import { campaignStore } from "../store/campaignStore";
 import { formatMessageTime } from "../configs/utils";
 
+
+const taskOptions = [
+  "Create Account",
+  "Review",
+  "Purchase",
+  "Play a game",
+  "Subscribe",
+  "Share",
+];
 
 const Campaigns = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +25,9 @@ const Campaigns = () => {
     rewardType: "discount",
     rewardValue: "",
     campaignMessage: "",
+    task: "",
   });
+  const [isTaskDropdownOpen, setIsTaskDropdownOpen] = useState(false);
 
   const {
     campaigns,
@@ -28,6 +39,7 @@ const Campaigns = () => {
     isUpdating,
     isDeleting,
   } = campaignStore();
+
   useEffect(() => {
     fetchCampaigns();
   }, []);
@@ -43,7 +55,7 @@ const Campaigns = () => {
     }));
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isEditing) {
       console.log("Updating Campaign:", { id: editingCampaignId, ...formData });
@@ -67,19 +79,21 @@ const Campaigns = () => {
       rewardType: "discount",
       rewardValue: "",
       campaignMessage: "",
+      task: "",
     });
+    setIsTaskDropdownOpen(false);
   };
 
   const handleEdit = (campaign) => {
     setFormData({
       name: campaign.name,
       description: campaign.description,
-      // Convert ISO date to "yyyy-MM-dd" format
       startDate: new Date(campaign.startDate).toISOString().split("T")[0],
       endDate: new Date(campaign.endDate).toISOString().split("T")[0],
       rewardType: campaign.rewardType,
       rewardValue: campaign.rewardValue,
       campaignMessage: campaign.campaignMessage,
+      task: campaign.task || "", // Preset task if available
     });
     setIsEditing(true);
     setEditingCampaignId(campaign._id);
@@ -90,7 +104,6 @@ const Campaigns = () => {
     deleteCampaign(id);
     closeModal();
   };
-  
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -118,16 +131,12 @@ const Campaigns = () => {
           <Filter />
         </button>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {campaigns && campaigns.length > 0 ? (
           campaigns.map((campaign) => {
             const isActive = new Date(campaign.endDate) >= new Date();
             return (
-              <div
-                key={campaign._id}
-                className="bg-gray-800 p-4 rounded-lg shadow-lg"
-              >
+              <div key={campaign._id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold">{campaign?.name}</h3>
                   <span
@@ -157,13 +166,11 @@ const Campaigns = () => {
                   <div className="flex flex-col items-center">
                     <span className="text-sm text-gray-400">Reward</span>
                     <span className="text-lg font-semibold text-purple-400">
-                      {campaign.rewardValue}%
+                      {campaign?.rewardValue}%
                     </span>
                   </div>
                 </div>
-                <p className="mt-2 text-gray-400 text-sm">
-                  {campaign?.description}
-                </p>
+                <p className="mt-2 text-gray-400 text-sm">{campaign?.description}</p>
                 <div className="flex justify-evenly gap-2 mt-2">
                   <button
                     onClick={() => handleEdit(campaign)}
@@ -171,7 +178,7 @@ const Campaigns = () => {
                   >
                     <Edit size={20} />
                   </button>
-                  <button onClick={()=>handleDelete(campaign._id)} className="text-red-400 hover:text-red-600 cursor-pointer">
+                  <button onClick={() => handleDelete(campaign._id)} className="text-red-400 hover:text-red-600 cursor-pointer">
                     <Trash2 size={20} />
                   </button>
                 </div>
@@ -179,12 +186,9 @@ const Campaigns = () => {
             );
           })
         ) : (
-          <p className="col-span-full text-center text-gray-400">
-            No campaigns found.
-          </p>
+          <p className="col-span-full text-center text-gray-400">No campaigns found.</p>
         )}
       </div>
-
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-lg">
@@ -252,6 +256,31 @@ const Campaigns = () => {
                   className="w-full p-2 bg-gray-700 rounded"
                   required
                 />
+              </div>
+              <div className="relative">
+                <label className="block text-sm text-gray-400 mb-1">Task</label>
+                <div
+                  className="w-full p-2 bg-gray-700 rounded cursor-pointer"
+                  onClick={() => setIsTaskDropdownOpen(!isTaskDropdownOpen)}
+                >
+                  {formData.task || "Select Task"}
+                </div>
+                {isTaskDropdownOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-gray-700 rounded max-h-40 overflow-y-auto shadow-lg">
+                    {taskOptions.map((task) => (
+                      <div
+                        key={task}
+                        className="p-2 hover:bg-gray-600 cursor-pointer text-sm"
+                        onClick={() => {
+                          setFormData({ ...formData, task });
+                          setIsTaskDropdownOpen(false);
+                        }}
+                      >
+                        {task}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <input

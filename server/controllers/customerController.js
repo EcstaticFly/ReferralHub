@@ -1,6 +1,21 @@
 import Customer from "../models/Customer.js";
 import csv from "fast-csv";
 import fs from "fs";
+import crypto from "crypto";
+
+const generateUniqueReferralCode = async () => {
+  let referralCode;
+  let exists = true;
+
+  while (exists) {
+    referralCode = crypto.randomBytes(4).toString("hex"); // Generates an 8-character code
+    const existingCustomer = await Customer.findOne({ referralCode });
+    exists = !!existingCustomer; // If found, keep generating
+  }
+
+  return referralCode;
+};
+
 
 export const importCustomers = async (req, res) => {
   try {
@@ -13,15 +28,17 @@ c
     let newCustomers = [];
     fs.createReadStream(req.file.path)
       .pipe(csv.parse({ headers: true }))
-      .on("data", (row) => {
+      .on("data", async(row) => {
         // Only add the customer if their email doesn't already exist
         if (!existingEmails.has(row.email)) {
+          const referralCode = await generateUniqueReferralCode(); // Ensure uniqueness
+      
           newCustomers.push({
             businessId: req.user.id,
             name: row.name,
             email: row.email,
             phone: row.phone,
-            referralCode: Math.random().toString(36).slice(2, 10),
+            referralCode,
           });
         }
       })

@@ -41,7 +41,6 @@ export const referralStore = create((set, get) => ({
     try {
       const response = await axiosInstance.post("/referral/send-bulk", bulkData);
       toast.success(response.data.message);
-      // Optionally, refresh referral list after sending
       await get().fetchReferrals();
     } catch (error) {
       console.error(error);
