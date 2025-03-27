@@ -7,14 +7,11 @@ import {
   Users,
   User,
   LogOut,
-  Send,
-  MessageCircle,
 } from "lucide-react";
 import Dashboard from "../components/Dashboard";
 import Campaigns from "../components/Campaigns";
 import Customers from "../components/Customers";
 import { authStore } from "../store/authStore";
-import { AnimatePresence, motion } from "framer-motion";
 
 const menuItems = [
   {
