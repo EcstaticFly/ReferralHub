@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Plus, Filter, Sparkles, Trash2, Edit } from "lucide-react";
+import { Plus, Filter, Sparkles, Trash2, Edit, Mail } from "lucide-react";
 import { campaignStore } from "../store/campaignStore";
 import { formatMessageTime } from "../configs/utils";
+import { customerStore } from "../store/customerStore";
+import { referralStore } from "../store/referralStore";
 
 
 const taskOptions = [
@@ -39,10 +41,17 @@ const Campaigns = () => {
     isUpdating,
     isDeleting,
   } = campaignStore();
+  const {fetchCustomers, customers} = customerStore();
+
+  const {sendReferralBulk, isSending} = referralStore();
 
   useEffect(() => {
     fetchCampaigns();
   }, []);
+
+  useEffect(() => {
+    fetchCustomers();
+  },[]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,6 +63,12 @@ const Campaigns = () => {
       campaignMessage: "Limited-time offer! Get amazing rewards now!",
     }));
   };
+
+  const handleSendMail = async(campaign) => {
+    const recipientEmails = customers.map((customer) => customer.email);
+    const bulkData = { recipientEmails, campaign };
+    await sendReferralBulk(bulkData);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -181,6 +196,9 @@ const Campaigns = () => {
                   <button onClick={() => handleDelete(campaign._id)} className="text-red-400 hover:text-red-600 cursor-pointer">
                     <Trash2 size={20} />
                   </button>
+                  <button onClick={() => handleSendMail(campaign)} className="text-blue-400 hover:text-blue-600 cursor-pointer">
+                    <Mail size={20} />
+                  </button>
                 </div>
               </div>
             );
@@ -300,7 +318,7 @@ const Campaigns = () => {
                 </button>
               </div>
               <button type="submit" className="w-full p-3 bg-green-600 rounded">
-                {isEditing ? "Update Campaign" : "Create Campaign"}
+                {isEditing ? "Update Campaign" : isCreating ? "Creating..." : isUpdating ? "Updating..." : "Create Campaign"}
               </button>
             </form>
           </div>

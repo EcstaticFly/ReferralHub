@@ -17,35 +17,47 @@ const generateUniqueReferralCode = async () => {
   return referralCode;
 };
 
+
 export const sendReferralBulk = async (req, res) => {
   const { campaign, recipientEmails } = req.body;
+  console.log(campaign);
   try {
+    // Process each email
     const referralLinks = await Promise.all(
       recipientEmails.map(async (email) => {
         const customer = await Customer.findOne({ businessId: req.user.id, email });
-        let referralCode = "";
-        if (customer) {
-          referralCode = customer.referralCode;
-          // Increment referralsSent by 1 for this customer.
-          await Customer.findByIdAndUpdate(customer._id, { $inc: { referralsSent: 1 } });
-        } else {
-          referralCode = await generateUniqueReferralCode();
+        if (!customer) {
+          // If no customer is found, skip this email
+          return null;
         }
-
+        // Use existing referralCode or generate a new one and update the customer
+        let referralCode = customer.referralCode;
+        if (!referralCode) {
+          referralCode = await generateUniqueReferralCode();
+          customer.referralCode = referralCode;
+          await customer.save();
+        }
+        // Increment referralsSent for this customer
+        await Customer.findByIdAndUpdate(customer._id, { $inc: { referralsSent: 1 } });
+        
         return {
-          campaignId: campaign.campaignId,
+          campaignId: campaign._id, // Ensure campaign object has campaignId
+          referrerId: customer._id,          // Set referrerId using the customer's _id
           referredEmail: email,
-          referralLink: `http://localhost:5173/api/referral/${referralCode}`,
+          referralLink: `http://localhost:5173/api/referral/perform?task=${campaign.task}&code=${referralCode}`,
         };
       })
     );
+    // Filter out any nulls (emails that were skipped)
+    const validReferralLinks = referralLinks.filter((ref) => ref !== null);
 
-    await Referral.insertMany(referralLinks);
+    await Referral.insertMany(validReferralLinks);
 
     await sendBulkEmail(
       recipientEmails,
       "Join our Referral Program!",
-      campaign.campaignMessage
+      campaign.campaignMessage,
+      validReferralLinks,
     );
 
     res.json({ message: "Referral emails sent successfully" });

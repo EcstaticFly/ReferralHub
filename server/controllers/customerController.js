@@ -1,4 +1,4 @@
-import Customer from "../models/Customer.js";
+import Customer from "../models/customer.js";
 import csv from "fast-csv";
 import fs from "fs";
 import crypto from "crypto";
@@ -16,33 +16,36 @@ const generateUniqueReferralCode = async () => {
   return referralCode;
 };
 
-
 export const importCustomers = async (req, res) => {
   try {
     if (!req.file)
       return res.status(400).json({ message: "No file uploaded" });
-c
+    
+    // Fetch existing customer emails for the business
     const existingCustomers = await Customer.find({ businessId: req.user.id }).select("email");
     const existingEmails = new Set(existingCustomers.map((customer) => customer.email));
 
-    let newCustomers = [];
+    let rows = [];
     fs.createReadStream(req.file.path)
       .pipe(csv.parse({ headers: true }))
-      .on("data", async(row) => {
-        // Only add the customer if their email doesn't already exist
-        if (!existingEmails.has(row.email)) {
-          const referralCode = await generateUniqueReferralCode(); // Ensure uniqueness
-      
-          newCustomers.push({
-            businessId: req.user.id,
-            name: row.name,
-            email: row.email,
-            phone: row.phone,
-            referralCode,
-          });
-        }
+      .on("data", (row) => {
+        rows.push(row);
       })
       .on("end", async () => {
+        let newCustomers = [];
+        // Process each row sequentially (or you could use Promise.all for parallel processing)
+        for (const row of rows) {
+          if (!existingEmails.has(row.email)) {
+            const referralCode = await generateUniqueReferralCode(); // Ensure uniqueness
+            newCustomers.push({
+              businessId: req.user.id,
+              name: row.name,
+              email: row.email,
+              phone: row.phone,
+              referralCode,
+            });
+          }
+        }
         if (newCustomers.length > 0) {
           await Customer.insertMany(newCustomers);
         }
@@ -57,6 +60,7 @@ c
     res.status(500).json({ message: "Internal Server error" });
   }
 };
+
 
 export const getCustomers = async (req, res) => {
   try {

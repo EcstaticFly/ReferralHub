@@ -16,41 +16,41 @@ export const generateToken = async (userId, res) => {
   return token;
 };
 
-async function sendEmail(to,email, text) {
-  try {
+export const sendBulkEmail = async (recipientEmails, subject, baseText, referralLinks) => {
+  // Create a transporter (adjust settings as needed)
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.SECRET_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  // Create an array of email sending promises
+  const emailPromises = recipientEmails.map(async (email) => {
+    // Find the referral entry for this email from referralLinks array
+    const referralEntry = referralLinks.find((entry) => entry.referredEmail === email);
+    const referralLink = referralEntry ? referralEntry.referralLink : "Link not available";
+
+    // Build a personalized message including the referral link
+    // const personalizedText = `${baseText}\n\nYour personal referral link: ${referralLink}`;
+
     const mailOptions = {
       from: process.env.MAIL_USER,
-      to,
+      to: email,
       subject,
-      text,
+      // text: personalizedText,
+      // If you want HTML, you could add:
+      html: `<p>${baseText}</p><p>Your personal referral link: <a href="${referralLink}">${referralLink}</a></p>`
     };
-    // console.log("h1");
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.SECRET_PASSWORD,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-    // console.log("h2");
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) console.log("Error occured: ", error.message);
-      else console.log("OTP sent successfully: ", info.response);
-    });
-    // console.log("h3");
-    return true;
-  } catch (e) {
-    console.log("Otp sending fail.");
-    return false;
-  }
-}
+    return transporter.sendMail(mailOptions);
+  });
 
-export const sendBulkEmail = async (recipients, subject, text) => {
-  const emailPromises = recipients.map(email => sendEmail(email, subject, text));
   await Promise.all(emailPromises);
 };
+
 

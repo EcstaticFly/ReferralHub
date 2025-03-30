@@ -13,8 +13,8 @@ export const loginUser = async (req, res) => {
         .json({ message: "Please provide both email and password" });
     }
     const business = await Business.findOne({ email })
-      .populate("customers") // Fetch linked customers
-      .populate("campaigns"); // Fetch linked campaigns
+      // .populate("customers") // Fetch linked customers
+      // .populate("campaigns"); // Fetch linked campaigns
       
     if (!business) return res.status(400).json({ message: "Business not found" });
 
