@@ -1,4 +1,3 @@
-import Navbar from "./components/navbar.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { authStore } from "./store/authStore.js";
 import { useEffect } from "react";
