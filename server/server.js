@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import connectDB from './configs/mongoDB.js'
+import connectDB from "./configs/mongoDB.js";
 
 import businessRoutes from "./routes/businessRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
@@ -11,7 +11,6 @@ import customerRoutes from "./routes/customerRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import rewardRoutes from "./routes/rewardRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
-
 
 dotenv.config();
 
@@ -35,12 +34,12 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.json({limit:"5mb"}));
-app.use(express.urlencoded({limit:"5mb", extended:true}));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
-})
+});
 
 app.use("/api/business", businessRoutes);
 app.use("/api/campaign", campaignRoutes);
