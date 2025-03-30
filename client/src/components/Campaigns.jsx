@@ -1,10 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Plus, Filter, Sparkles, Trash2, Edit, Mail } from "lucide-react";
+import {
+  Plus,
+  Filter,
+  Sparkles,
+  Trash2,
+  Edit,
+  Mail,
+  Loader,
+} from "lucide-react";
 import { campaignStore } from "../store/campaignStore";
 import { formatMessageTime } from "../configs/utils";
 import { customerStore } from "../store/customerStore";
 import { referralStore } from "../store/referralStore";
-
 
 const taskOptions = [
   "Create Account",
@@ -41,9 +48,9 @@ const Campaigns = () => {
     isUpdating,
     isDeleting,
   } = campaignStore();
-  const {fetchCustomers, customers} = customerStore();
+  const { fetchCustomers, customers } = customerStore();
 
-  const {sendReferralBulk, isSending} = referralStore();
+  const { sendReferralBulk, isSending } = referralStore();
 
   useEffect(() => {
     fetchCampaigns();
@@ -51,7 +58,7 @@ const Campaigns = () => {
 
   useEffect(() => {
     fetchCustomers();
-  },[]);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -64,11 +71,11 @@ const Campaigns = () => {
     }));
   };
 
-  const handleSendMail = async(campaign) => {
+  const handleSendMail = async (campaign) => {
     const recipientEmails = customers.map((customer) => customer.email);
     const bulkData = { recipientEmails, campaign };
     await sendReferralBulk(bulkData);
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,7 +158,10 @@ const Campaigns = () => {
           campaigns.map((campaign) => {
             const isActive = new Date(campaign.endDate) >= new Date();
             return (
-              <div key={campaign._id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
+              <div
+                key={campaign._id}
+                className="bg-gray-800 p-4 rounded-lg shadow-lg"
+              >
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold">{campaign?.name}</h3>
                   <span
@@ -163,7 +173,8 @@ const Campaigns = () => {
                   </span>
                 </div>
                 <p className="text-gray-400 text-sm">
-                  {formatMessageTime(campaign?.startDate)} - {formatMessageTime(campaign?.endDate)}
+                  {formatMessageTime(campaign?.startDate)} -{" "}
+                  {formatMessageTime(campaign?.endDate)}
                 </p>
                 <div className="flex justify-between mt-4">
                   <div className="flex flex-col items-center">
@@ -185,7 +196,9 @@ const Campaigns = () => {
                     </span>
                   </div>
                 </div>
-                <p className="mt-2 text-gray-400 text-sm">{campaign?.description}</p>
+                <p className="mt-2 text-gray-400 text-sm">
+                  {campaign?.description}
+                </p>
                 <div className="flex justify-evenly gap-2 mt-2">
                   <button
                     onClick={() => handleEdit(campaign)}
@@ -193,18 +206,35 @@ const Campaigns = () => {
                   >
                     <Edit size={20} />
                   </button>
-                  <button onClick={() => handleDelete(campaign._id)} className="text-red-400 hover:text-red-600 cursor-pointer">
+                  <button
+                    onClick={() => handleDelete(campaign._id)}
+                    className="text-red-400 hover:text-red-600 cursor-pointer"
+                  >
                     <Trash2 size={20} />
                   </button>
-                  <button onClick={() => handleSendMail(campaign)} className="text-blue-400 hover:text-blue-600 cursor-pointer">
-                    <Mail size={20} />
-                  </button>
+                  {isSending ? (
+                    <div className="text-blue-400 pointer-events-none">
+                      <Loader
+                        className="animate-spin text-blue-400"
+                        size={20}
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleSendMail(campaign)}
+                      className="text-blue-400 hover:text-blue-600 cursor-pointer"
+                    >
+                      <Mail size={20} />
+                    </button>
+                  )}
                 </div>
               </div>
             );
           })
         ) : (
-          <p className="col-span-full text-center text-gray-400">No campaigns found.</p>
+          <p className="col-span-full text-center text-gray-400">
+            No campaigns found.
+          </p>
         )}
       </div>
       {isModalOpen && (
@@ -318,7 +348,13 @@ const Campaigns = () => {
                 </button>
               </div>
               <button type="submit" className="w-full p-3 bg-green-600 rounded">
-                {isEditing ? "Update Campaign" : isCreating ? "Creating..." : isUpdating ? "Updating..." : "Create Campaign"}
+                {isEditing
+                  ? "Update Campaign"
+                  : isCreating
+                  ? "Creating..."
+                  : isUpdating
+                  ? "Updating..."
+                  : "Create Campaign"}
               </button>
             </form>
           </div>

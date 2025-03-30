@@ -44,7 +44,7 @@ export const sendReferralBulk = async (req, res) => {
           campaignId: campaign._id, // Ensure campaign object has campaignId
           referrerId: customer._id,          // Set referrerId using the customer's _id
           referredEmail: email,
-          referralLink: `http://localhost:5173/api/referral/perform?task=${campaign.task}&code=${referralCode}`,
+          referralLink: `http://localhost:5173/referral?task=${campaign.task}&code=${referralCode}`,
         };
       })
     );
