@@ -10,6 +10,7 @@ import referralRoutes from "./routes/referralRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import rewardRoutes from "./routes/rewardRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/api/referral", referralRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/reward", rewardRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
