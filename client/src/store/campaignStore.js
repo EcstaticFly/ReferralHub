@@ -28,15 +28,8 @@ export const campaignStore = create((set, get) => ({
     set({ isCreating: true });
     try {
       const response = await axiosInstance.post("/campaign/create", campaignData);
-      set({ campaigns: [...get().campaigns, response.data.campaign] });
-      // const {sendReferralBulk} = referralStore.getState();
-      // const campaign = campaignData;
-      // const recipientEmails = customerStore.getState().customers.map((customer) => customer.email);
-      // const bulkData = { campaign, recipientEmails };
-      // console.log(bulkData);
-      // await sendReferralBulk(bulkData);      
+      set({ campaigns: [...get().campaigns, response.data.campaign] });     
       toast.success(response.data.message);
-      // toast.success("Referral links sent successfully");
     } catch (error) {
       console.error(error);
       toast.error(error.response.data.message);

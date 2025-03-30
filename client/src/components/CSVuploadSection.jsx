@@ -11,7 +11,6 @@ const CSVUploadSection = () => {
     if (selectedFile) {
       setFile(selectedFile);
 
-      // Create FormData to send file
       const formData = new FormData();
       formData.append("file", selectedFile);
 
@@ -20,7 +19,7 @@ const CSVUploadSection = () => {
   };
 
   const handleDragOver = (event) => {
-    event.preventDefault(); // Prevent browser from opening the file
+    event.preventDefault();
   };
 
   const handleDrop = async (event) => {
@@ -28,8 +27,7 @@ const CSVUploadSection = () => {
     const selectedFile = event.dataTransfer.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-  
-      // Create FormData to send file, similar to handleFileChange
+
       const formData = new FormData();
       formData.append("file", selectedFile);
   

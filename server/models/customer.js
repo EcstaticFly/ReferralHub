@@ -5,10 +5,10 @@ const customerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String },
-  referralCode: { type: String, unique: true, sparse: true }, // Optional and indexed properly
-  referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", default: null, sparse: true }, // Optional
+  referralCode: { type: String, unique: true, sparse: true }, 
+  referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", default: null, sparse: true }, 
   rewardsEarned: { type: Number, default: 0 },
-  referralsSent: { type: Number, default: 0 }, // New field for number of referrals sent
+  referralsSent: { type: Number, default: 0 }, 
   createdAt: { type: Date, default: Date.now },
 });
 

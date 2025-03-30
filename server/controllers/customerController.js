@@ -20,8 +20,7 @@ export const importCustomers = async (req, res) => {
   try {
     if (!req.file)
       return res.status(400).json({ message: "No file uploaded" });
-    
-    // Fetch existing customer emails for the business
+
     const existingCustomers = await Customer.find({ businessId: req.user.id }).select("email");
     const existingEmails = new Set(existingCustomers.map((customer) => customer.email));
 
@@ -33,10 +32,10 @@ export const importCustomers = async (req, res) => {
       })
       .on("end", async () => {
         let newCustomers = [];
-        // Process each row sequentially (or you could use Promise.all for parallel processing)
+
         for (const row of rows) {
           if (!existingEmails.has(row.email)) {
-            const referralCode = await generateUniqueReferralCode(); // Ensure uniqueness
+            const referralCode = await generateUniqueReferralCode(); 
             newCustomers.push({
               businessId: req.user.id,
               name: row.name,

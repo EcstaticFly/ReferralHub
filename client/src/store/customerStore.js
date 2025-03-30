@@ -24,7 +24,6 @@ export const customerStore = create((set, get) => ({
   importCustomers: async (formData) => {
     set({ isImporting: true });
     try {
-      // Optional: log entries to verify formData content
       for (const [key, value] of formData.entries()) {
         console.log(key, value);
       }

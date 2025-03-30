@@ -13,8 +13,6 @@ export const loginUser = async (req, res) => {
         .json({ message: "Please provide both email and password" });
     }
     const business = await Business.findOne({ email })
-      // .populate("customers") // Fetch linked customers
-      // .populate("campaigns"); // Fetch linked campaigns
       
     if (!business) return res.status(400).json({ message: "Business not found" });
 
@@ -49,11 +47,7 @@ export const registerUser = async (req, res) => {
     if (!email || !password || !fullName || !businessType) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
-    // if (password.length < 6) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Password must be at least 6 characters long" });
-    // }
+
     const existingBusiness = await Business.findOne({ email });
     if (existingBusiness) return res.status(400).json({ message: "Email already in use" });
 

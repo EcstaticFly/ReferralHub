@@ -39,7 +39,6 @@ const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
-  // Retrieve active component from localStorage on mount
   useEffect(() => {
     const storedComponent = localStorage.getItem("activeComponent");
     if (storedComponent) {
@@ -47,7 +46,6 @@ const HomePage = () => {
     }
   }, []);
 
-  // Update localStorage whenever activeComponent changes
   useEffect(() => {
     localStorage.setItem("activeComponent", activeComponent);
   }, [activeComponent]);

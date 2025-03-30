@@ -8,7 +8,7 @@ const Customers = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [fetchCustomers]);
 
   const MetricCard = ({ icon, title, value, color }) => (
     <div
@@ -35,7 +35,7 @@ const Customers = () => {
     </div>
   );
 
-  const CustomerItem = ({ name, email, referralsSent, conversionRate }) => (
+  const CustomerItem = ({ name, email, referralCount, rewards }) => (
     <div
       className="
         flex items-center justify-between 
@@ -60,11 +60,11 @@ const Customers = () => {
       <div className="flex space-x-4">
         <div className="text-right">
           <p className="text-sm text-gray-500 dark:text-gray-400">Referrals</p>
-          <p className="font-semibold dark:text-white">{referralsSent || 0}</p>
+          <p className="font-semibold dark:text-white">{referralCount || 0}</p>
         </div>
         <div className="text-right">
           <p className="text-sm text-gray-500 dark:text-gray-400">Rewards</p>
-          <p className="font-semibold dark:text-white">{conversionRate || 0}</p>
+          <p className="font-semibold dark:text-white">{rewards || 0}</p>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@ const Customers = () => {
 
   return (
     <div className="space-y-6 p-2">
-      {/* Metrics Cards */}
+
       <div className="grid md:grid-cols-2 gap-6">
         <MetricCard
           icon={<Users size={32} className="text-white" />}
@@ -88,7 +88,6 @@ const Customers = () => {
         />
       </div>
 
-      {/* Import Customers Section */}
       <div>
         <h2 className="text-xl font-bold mb-4 dark:text-white">
           Import Customers
@@ -96,7 +95,6 @@ const Customers = () => {
         <CSVUploadSection />
       </div>
 
-      {/* Customers List */}
       <div>
         <h2 className="text-xl font-bold mb-4 dark:text-white">
           Customers

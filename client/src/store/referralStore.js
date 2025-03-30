@@ -20,22 +20,7 @@ export const referralStore = create((set, get) => ({
       set({ isLoading: false });
     }
   },
-
-  // sendReferral: async (referralData) => {
-  //   set({ isSending: true });
-  //   try {
-  //     const response = await axiosInstance.post("/referral/send", referralData);
-  //     toast.success(response.data.message);
-  //     // Optionally, add new referral to state
-  //     set({ referrals: [...get().referrals, response.data.referral] });
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Failed to send referral");
-  //   } finally {
-  //     set({ isSending: false });
-  //   }
-  // },
-
+  
   sendReferralBulk: async (bulkData) => {
     set({ isSending: true });
     try {

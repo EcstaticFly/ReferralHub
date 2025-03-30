@@ -22,7 +22,7 @@ export const sendBulkEmail = async (
   baseText,
   referralLinks
 ) => {
-  // Create a transporter (adjust settings as needed)
+
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -34,9 +34,8 @@ export const sendBulkEmail = async (
     },
   });
 
-  // Create an array of email sending promises
   const emailPromises = recipientEmails.map(async (email) => {
-    // Find the referral entry for this email from referralLinks array
+
     const referralEntry = referralLinks.find(
       (entry) => entry.referredEmail === email
     );

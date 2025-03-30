@@ -54,11 +54,11 @@ const Campaigns = () => {
 
   useEffect(() => {
     fetchCampaigns();
-  }, []);
+  }, [fetchCampaigns]);
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [fetchCustomers]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -115,7 +115,7 @@ const Campaigns = () => {
       rewardType: campaign.rewardType,
       rewardValue: campaign.rewardValue,
       campaignMessage: campaign.campaignMessage,
-      task: campaign.task || "", // Preset task if available
+      task: campaign.task || "",
     });
     setIsEditing(true);
     setEditingCampaignId(campaign._id);

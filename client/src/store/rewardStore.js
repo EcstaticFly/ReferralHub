@@ -11,7 +11,6 @@ export const rewardStore = create((set) => ({
     try {
       const response = await axiosInstance.post("/reward/issue", rewardData);
       toast.success(response.data.message);
-      // Optionally, add reward to the state
       set((state) => ({ rewards: [...state.rewards, response.data.reward] }));
     } catch (error) {
       console.error(error);
@@ -21,5 +20,4 @@ export const rewardStore = create((set) => ({
     }
   },
 
-  // Optionally, add methods to fetch rewards if needed
 }));

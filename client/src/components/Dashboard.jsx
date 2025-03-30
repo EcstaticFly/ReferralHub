@@ -10,10 +10,16 @@ import MetricCard from "./MetricCard";
 import ReferralItem from "./ReferralItem";
 
 const Dashboard = () => {
-  const { stats , fetchStats} = dashboardStore();
+  const { stats , fetchStats, isLoading} = dashboardStore();
+
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
+
+  console.log(stats);
+  if (isLoading || !stats) {
+    return <div>Loading dashboard data...</div>;
+  }
 
   return (
     <div className="space-y-6 p-2">

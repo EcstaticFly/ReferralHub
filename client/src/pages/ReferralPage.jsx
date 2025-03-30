@@ -7,7 +7,6 @@ const ReferralPage = () => {
   const [searchParams] = useSearchParams();
   const { updateReferralStatus } = referralStore();
 
-  // Extract campaign details from URL
   const campaignName = searchParams.get("campaignName");
   const campaignDescription = searchParams.get("campaignDescription");
   const task = searchParams.get("task");
@@ -16,7 +15,8 @@ const ReferralPage = () => {
   const rewardValue = searchParams.get("rewardValue");
   const rewardType = searchParams.get("rewardType");
   const businessId = searchParams.get("businessId");
-  const referralId = searchParams.get("referralId"); // Extract referralId
+  const referralId = searchParams.get("referralId");
+  const [loading, setLoading] = useState(false);
 
   const [status, setStatus] = useState("pending");
   const [email, setEmail] = useState("");
@@ -32,6 +32,7 @@ const ReferralPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log("Submitting referral data:", {
       email,
       task,
@@ -41,9 +42,15 @@ const ReferralPage = () => {
       payoutMethod,
       referralId,
     });
-    if (email !== "") {
-      await updateReferralStatus(referralId, status, businessId, payoutMethod, email);
-      navigate("/");
+    try {
+      if (email !== "") {
+        await updateReferralStatus(referralId, status, businessId, payoutMethod, email);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Failed to update referral status:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,37 +61,26 @@ const ReferralPage = () => {
           Referral Confirmation
         </h2>
 
-        {/* Referral ID */}
-        {/* <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-1">Referral ID</label>
-          <div className="p-3 bg-gray-200 rounded border break-words">{referralId || "N/A"}</div>
-        </div> */}
-
-        {/* Campaign Name */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-1">Campaign Name</label>
           <div className="p-3 bg-gray-200 rounded border break-words">{campaignName || "N/A"}</div>
         </div>
 
-        {/* Campaign Description */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-1">Campaign Description</label>
           <div className="p-3 bg-gray-200 rounded border break-words">{campaignDescription || "N/A"}</div>
         </div>
 
-        {/* Task */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-1">Task</label>
           <div className="p-3 bg-gray-200 rounded border break-words">{task || "N/A"}</div>
         </div>
 
-        {/* Referral Code */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-1">Referral Code</label>
           <div className="p-3 bg-gray-200 rounded border break-words">{code || "N/A"}</div>
         </div>
 
-        {/* Reward Details */}
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-600 text-sm font-semibold mb-1">Reward Type</label>
@@ -100,7 +96,6 @@ const ReferralPage = () => {
           </div>
         </div>
 
-        {/* Email Input */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-1">Your Email</label>
           <input
@@ -109,11 +104,10 @@ const ReferralPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 border rounded focus:ring focus:ring-blue-300"
-            placeholder="Enter your email"
+            placeholder="Enter your email to receive the reward"
           />
         </div>
 
-        {/* Status Selection */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-2">Task Status</label>
           <div className="flex space-x-4">
@@ -136,7 +130,6 @@ const ReferralPage = () => {
           </div>
         </div>
 
-        {/* Payout Method Selection */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-semibold mb-2">Payout Method</label>
           <div className="flex space-x-4">
@@ -154,12 +147,38 @@ const ReferralPage = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
         <button 
           type="submit" 
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded font-semibold"
+          className="w-full bg-green-600 cursor-pointer hover:bg-green-700 text-white py-3 rounded font-semibold flex justify-center items-center"
+          disabled={loading}
         >
-          Submit
+          {loading ? (
+            <div className="flex items-center">
+              <svg
+                className="animate-spin h-5 w-5 text-white mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              Processing...
+            </div>
+          ) : (
+            "Submit"
+          )}
         </button>
       </form>
     </div>

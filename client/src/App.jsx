@@ -32,7 +32,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={user ? <HomePage /> : <Navigate to="/register" />}
+          element={user ? <HomePage /> : <Navigate to="/login" />}
         />
         <Route
           path="/register"
