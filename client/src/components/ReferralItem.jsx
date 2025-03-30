@@ -13,7 +13,7 @@ const ReferralItem = ({ referredEmail, createdAt, status }) => {
         </div>
         <div>
           <p className="font-semibold dark:text-white">Referral to: {referredEmail}</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Status: {status}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Reward Status: {status}</p>
         </div>
       </div>
       <span className="text-xs text-gray-400 dark:text-gray-500">
