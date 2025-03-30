@@ -66,7 +66,7 @@ const Chatbot = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       fetchChatHistory();
-      // Focus the input when the chatbot is opened
+
       setTimeout(() => {
         if (inputRef.current) {
           inputRef.current.focus();
@@ -76,7 +76,7 @@ const Chatbot = ({ isOpen, onClose }) => {
   }, [isOpen, fetchChatHistory]);
 
   useEffect(() => {
-    // Scroll to bottom whenever messages change
+
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -124,7 +124,7 @@ const Chatbot = ({ isOpen, onClose }) => {
           >
             <div className="flex items-center gap-2">
               <Bot size={20} />
-              <h3 className="font-semibold">Gemini Assistant</h3>
+              <h3 className="font-semibold">EngageBot</h3>
             </div>
             <div className="flex gap-2">
               <button
