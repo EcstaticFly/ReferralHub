@@ -384,3 +384,45 @@ export const clearChatHistory = async (req, res) => {
     res.status(500).json({ message: "Error clearing chat history" });
   }
 };
+
+
+// Add this to your chatController.js file
+
+// New endpoint for campaign message suggestions
+export const getCampaignSuggestion = async (req, res) => {
+  try {
+    const { message, campaignName, rewardType, rewardValue } = req.body;
+    const userId = req.user.id;
+    const businessType = req.user.businessType || "business";
+    
+    // If no chat session exists for this user, create one
+    if (!userChatSessions[userId]) {
+      userChatSessions[userId] = model.startChat({
+        history: [],
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.8,
+          topK: 40,
+          maxOutputTokens: 250, // Shorter for campaign messages
+        },
+      });
+    }
+    
+    // Enhance prompt with business type context
+    const enhancedPrompt = `${message}\n\nThis is for a ${businessType} business. Make the message compelling, short, and focused on what the referrer gets. Include a call to action.`;
+    
+    const chat = userChatSessions[userId];
+    const result = await chat.sendMessage(enhancedPrompt);
+    const responseText = result.response.text();
+    
+    // Return the AI-generated message
+    res.json({ response: responseText });
+    
+  } catch (error) {
+    console.error("Error generating campaign suggestion:", error);
+    res.status(500).json({ 
+      message: "Error generating campaign suggestion", 
+      error: error.message 
+    });
+  }
+};

@@ -12,6 +12,7 @@ import { campaignStore } from "../store/campaignStore";
 import { formatMessageTime } from "../configs/utils";
 import { customerStore } from "../store/customerStore";
 import { referralStore } from "../store/referralStore";
+import { chatStore } from "../store/chatStore";
 
 const taskOptions = [
   "Create Account",
@@ -23,9 +24,11 @@ const taskOptions = [
 ];
 
 const Campaigns = () => {
+  const { getSuggestion } = chatStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingCampaignId, setEditingCampaignId] = useState(null);
+  const [isSuggestionLoading, setIsSuggestionLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -64,11 +67,40 @@ const Campaigns = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const getAISuggestion = () => {
-    setFormData((prev) => ({
-      ...prev,
-      campaignMessage: "Limited-time offer! Get amazing rewards now!",
-    }));
+  const getAISuggestion = async () => {
+    setIsSuggestionLoading(true);
+    try {
+      const campaignName = formData.name || "campaign";
+      const campaignDescription = formData.description || "";
+      const rewardType = formData.rewardType || "discount";
+      const rewardValue = formData.rewardValue || "";
+
+      const message = `Generate a single short, creative, engaging campaign message for my ${rewardType} referral program called "${campaignName}". The reward is ${rewardValue}% ${rewardType}. Additional info: ${campaignDescription}. Keep it under 150 characters. Don't give anything else other than the campaign message and reward details. Don't forget to include title if there's any. Don't give any promotional codes or promo codes in the message. Don't to highlight anything, just plain text`;
+
+      const response = await getSuggestion(
+        campaignName,
+        campaignDescription,
+        rewardType,
+        rewardValue,
+        message
+      );
+
+      if (response) {
+        setFormData((prev) => ({
+          ...prev,
+          campaignMessage: response,
+        }));
+      }
+    } catch (error) {
+      console.error("Error getting AI suggestion:", error);
+
+      setFormData((prev) => ({
+        ...prev,
+        campaignMessage: `Join our "${formData.name}" referral program and earn rewards!`,
+      }));
+    } finally {
+      setIsSuggestionLoading(false);
+    }
   };
 
   const handleSendMail = async (campaign) => {
@@ -342,9 +374,14 @@ const Campaigns = () => {
                 <button
                   type="button"
                   onClick={getAISuggestion}
-                  className="p-2 bg-blue-600 rounded"
+                  className="p-2 bg-blue-600 rounded cursor-pointer disabled:cursor-not-allowed hover:bg-blue-700 transition-colors disabled:opacity-70"
+                  disabled={isSuggestionLoading}
                 >
-                  <Sparkles />
+                  {isSuggestionLoading ? (
+                    <Loader className="animate-spin text-white" size={18} />
+                  ) : (
+                    <Sparkles size={18} />
+                  )}
                 </button>
               </div>
               <button type="submit" className="w-full p-3 bg-green-600 rounded">

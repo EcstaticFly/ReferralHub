@@ -68,5 +68,22 @@ export const chatStore = create((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  getSuggestion: async (campaignName, campaignDescription, rewardType, rewardValue, message) => {
+    try {
+      const response = await axiosInstance.post("/chat/campaign-suggestion", {
+        campaignName,
+        campaignDescription,
+        rewardType,
+        rewardValue,
+        message
+      });
+      return response.data.response;
+    } catch (error) {
+      console.error("Error getting suggestion:", error);
+      toast.error("Failed to get suggestion");
+      return null;
+    }
   }
 }));
