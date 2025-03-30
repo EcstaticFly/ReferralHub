@@ -50,17 +50,19 @@ export const referralStore = create((set, get) => ({
     }
   },
 
-  updateReferralStatus: async (id, statusData) => {
+  updateReferralStatus: async (id, status, businessId, payoutMethod,email) => {
     set({ isUpdating: true });
+    // console.log(id, status, businessId, payoutMethod, email);
     try {
-      const response = await axiosInstance.put(`/referral/update/${id}`, statusData);
+      const response = await axiosInstance.put(`/referral/update/${id}`, {status, businessId, payoutMethod, email});
       toast.success("Referral updated");
-      set({
-        referrals: get().referrals.map((ref) => (ref._id === id ? response.data.referral : ref)),
-      });
+      // set({
+      //   referrals: get().referrals.map((ref) => (ref._id === id ? response.data.referral : ref)),
+      // });
+
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update referral");
+      toast.error(error.response.data.message);
     } finally {
       set({ isUpdating: false });
     }

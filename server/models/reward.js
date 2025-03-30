@@ -4,6 +4,8 @@ const rewardSchema = new mongoose.Schema({
   businessId: { type: mongoose.Schema.Types.ObjectId, ref: "Business", required: true },
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
   campaignId: { type: mongoose.Schema.Types.ObjectId, ref: "Campaign", required: true },
+  referredEmail: { type: String, required: true },
+  receivedEmail: { type: String },
   type: { type: String, enum: ["discount", "payout"], required: true },
   amount: { type: Number, required: true },
   status: { type: String, enum: ["pending", "paid"], default: "pending" },

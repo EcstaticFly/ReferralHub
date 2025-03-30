@@ -16,7 +16,12 @@ export const generateToken = async (userId, res) => {
   return token;
 };
 
-export const sendBulkEmail = async (recipientEmails, subject, baseText, referralLinks) => {
+export const sendBulkEmail = async (
+  recipientEmails,
+  subject,
+  baseText,
+  referralLinks
+) => {
   // Create a transporter (adjust settings as needed)
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -32,42 +37,52 @@ export const sendBulkEmail = async (recipientEmails, subject, baseText, referral
   // Create an array of email sending promises
   const emailPromises = recipientEmails.map(async (email) => {
     // Find the referral entry for this email from referralLinks array
-    const referralEntry = referralLinks.find((entry) => entry.referredEmail === email);
-    const referralLink = referralEntry ? referralEntry.referralLink : "Link not available";
+    const referralEntry = referralLinks.find(
+      (entry) => entry.referredEmail === email
+    );
+    const referralLink = referralEntry
+      ? referralEntry.referralLink
+      : "Link not available";
 
-    const htmlTemplate = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8" />
-        <title>Join Our Referral Program!</title>
-      </head>
-      <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
-        <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-          <h1 style="color: #333333; text-align: center; margin-bottom: 20px;">You're Invited!</h1>
-          <p style="color: #555555; font-size: 16px; line-height: 1.5;">Hello,</p>
-          <p style="color: #555555; font-size: 16px; line-height: 1.5;">
-            ${baseText}
-          </p>
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${referralLink}" style="display: inline-block; background-color: #007BFF; color: #ffffff; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 16px;">
-              Join Now
-            </a>
+      const htmlTemplate = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>${referralLink !== "Link not available" ? "You're Invited!" : "Thank You!"}</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <h1 style="color: #333333; text-align: center; margin-bottom: 20px;">
+              ${referralLink !== "Link not available" ? "You're Invited!" : "Thank You!"}
+            </h1>
+            <p style="color: #555555; font-size: 16px; line-height: 1.5;">Hello,</p>
+            <p style="color: #555555; font-size: 16px; line-height: 1.5;">
+              ${baseText}
+            </p>
+    
+            ${referralLink !== "Link not available" ? 
+              `<div style="text-align: center; margin: 30px 0;">
+                <a href="${referralLink}" 
+                  style="display: inline-block; background-color: #007BFF; color: #ffffff; 
+                  text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 16px;">
+                  Join Now
+                </a>
+              </div>` 
+            : ""}
+    
+            <p style="color: #777777; font-size: 14px; line-height: 1.5; text-align: center; margin-top: 20px;">
+              If you have any questions, please contact our support team.
+            </p>
+            <p style="color: #999999; font-size: 12px; text-align: center; margin-top: 30px;">
+              © 2025 Your Company. All rights reserved.
+            </p>
           </div>
-          <p style="color: #777777; font-size: 14px; text-align: center;">
-            Your personal referral code: <strong>${referralCode}</strong>
-          </p>
-          <p style="color: #777777; font-size: 14px; line-height: 1.5; text-align: center; margin-top: 20px;">
-            If you have any questions, please contact our support team.
-          </p>
-          <p style="color: #999999; font-size: 12px; text-align: center; margin-top: 30px;">
-            © 2025 Your Company. All rights reserved.
-          </p>
-        </div>
-      </body>
-    </html>
-  `;
-
+        </body>
+      </html>
+    `;
+    
+    
 
     const mailOptions = {
       from: process.env.MAIL_USER,
@@ -82,5 +97,3 @@ export const sendBulkEmail = async (recipientEmails, subject, baseText, referral
   await Promise.all(emailPromises);
   console.log("All emails sent!");
 };
-
-
