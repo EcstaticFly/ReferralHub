@@ -38,6 +38,10 @@ app.use(cookieParser());
 app.use(express.json({limit:"5mb"}));
 app.use(express.urlencoded({limit:"5mb", extended:true}));
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+})
+
 app.use("/api/business", businessRoutes);
 app.use("/api/campaign", campaignRoutes);
 app.use("/api/referral", referralRoutes);
