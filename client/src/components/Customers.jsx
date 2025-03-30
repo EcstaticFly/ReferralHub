@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Users, TrendingUp, User as UserIcon } from "lucide-react";
 import { customerStore } from "../store/customerStore";
 import CSVUploadSection from "./CSVuploadSection";
+import CustomerItem from "./CustomerItem";
 
 const Customers = () => {
   const { customers, totalRewards, fetchCustomers } = customerStore();
@@ -35,40 +36,7 @@ const Customers = () => {
     </div>
   );
 
-  const CustomerItem = ({ name, email, referralCount, rewards }) => (
-    <div
-      className="
-        flex items-center justify-between 
-        bg-white dark:bg-gray-800 
-        p-4 rounded-lg 
-        shadow-sm hover:shadow-md 
-        transition-shadow
-      "
-    >
-      <div className="flex items-center space-x-4">
-        <div className="
-            bg-blue-100 dark:bg-blue-900
-            p-2 rounded-full
-          ">
-          <UserIcon className="text-white" size={24} />
-        </div>
-        <div>
-          <p className="font-semibold dark:text-white">{name}</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">{email}</p>
-        </div>
-      </div>
-      <div className="flex space-x-4">
-        <div className="text-right">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Referrals</p>
-          <p className="font-semibold dark:text-white">{referralCount || 0}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Rewards</p>
-          <p className="font-semibold dark:text-white">{rewards || 0}</p>
-        </div>
-      </div>
-    </div>
-  );
+
 
   return (
     <div className="space-y-6 p-2">
