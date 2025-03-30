@@ -5,6 +5,10 @@ import { sendBulkEmail } from "../configs/utils.js";
 import Reward from "../models/reward.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+
+const CORS_ORIGIN=process.env.CORS_ORIGIN || "*";
 
 const generateUniqueReferralCode = async () => {
   let referralCode;
@@ -56,7 +60,7 @@ export const sendReferralBulk = async (req, res) => {
           $inc: { referralsSent: 1 },
         });
 
-        const updatedReferralLink = `http://localhost:5173/referral?task=${encodeURIComponent(
+        const updatedReferralLink = `${CORS_ORIGIN}/referral?task=${encodeURIComponent(
           campaign.task
         )}&code=${encodeURIComponent(
           referralCode
