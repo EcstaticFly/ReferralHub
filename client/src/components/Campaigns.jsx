@@ -7,6 +7,8 @@ import {
   Edit,
   Mail,
   Loader,
+  X,
+  CheckCircle,
 } from "lucide-react";
 import { campaignStore } from "../store/campaignStore";
 import { formatMessageTime } from "../configs/utils";
@@ -21,6 +23,14 @@ const taskOptions = [
   "Play a game",
   "Subscribe",
   "Share",
+];
+
+const filterOptions = [
+  { value: "all", label: "All Campaigns" },
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+  { value: "discount", label: "Discount" },
+  { value: "payout", label: "Payout" },
 ];
 
 const Campaigns = () => {
@@ -41,6 +51,10 @@ const Campaigns = () => {
   });
   const [isTaskDropdownOpen, setIsTaskDropdownOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+
   const {
     campaigns,
     fetchCampaigns,
@@ -55,6 +69,8 @@ const Campaigns = () => {
 
   const { sendReferralBulk, isSending } = referralStore();
 
+  const filterDropdownRef = useRef(null);
+
   useEffect(() => {
     fetchCampaigns();
   }, [fetchCampaigns]);
@@ -62,6 +78,22 @@ const Campaigns = () => {
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target)
+      ) {
+        setIsFilterDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,7 +107,7 @@ const Campaigns = () => {
       const rewardType = formData.rewardType || "discount";
       const rewardValue = formData.rewardValue || "";
 
-      const message = `Generate a single short, creative, engaging campaign message for my ${rewardType} referral program called "${campaignName}". The reward is ${rewardValue}% ${rewardType}. Additional info: ${campaignDescription}. Keep it under 150 characters. Don't give anything else other than the campaign message and reward details. Don't forget to include title if there's any. Don't give any promotional codes or promo codes in the message. Don't to highlight anything, just plain text`;
+      const message = `Generate a single short, creative, engaging campaign message for my ${rewardType} referral program called "${campaignName}". The reward is ${rewardValue}% ${rewardType}. Additional info: ${campaignDescription}. Keep it under 150 characters. Don't use any formatting, headings or asterisks. Provide only plain text with no titles or sections. Don't give anything else other than the campaign message and reward details.`;
 
       const response = await getSuggestion(
         campaignName,
@@ -159,6 +191,40 @@ const Campaigns = () => {
     closeModal();
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleFilterChange = (filterValue) => {
+    setActiveFilter(filterValue);
+    setIsFilterDropdownOpen(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+
+  const filteredCampaigns = campaigns?.filter((campaign) => {
+    const matchesSearch =
+      campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      campaign.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const isActive = new Date(campaign.endDate) >= new Date();
+
+    switch (activeFilter) {
+      case "active":
+        return matchesSearch && isActive;
+      case "completed":
+        return matchesSearch && !isActive;
+      case "discount":
+        return matchesSearch && campaign.rewardType === "discount";
+      case "payout":
+        return matchesSearch && campaign.rewardType === "payout";
+      default:
+        return matchesSearch;
+    }
+  });
+
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -176,18 +242,90 @@ const Campaigns = () => {
         </button>
       </div>
       <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search campaigns..."
-          className="p-2 bg-gray-800 rounded-lg w-full focus:ring focus:ring-blue-500"
-        />
-        <button className="bg-gray-700 p-2 rounded-lg">
-          <Filter />
-        </button>
+        <div className="relative flex-grow">
+          <input
+            type="text"
+            placeholder="Search campaigns..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="p-2 pl-3 pr-10 bg-gray-800 rounded-lg w-full focus:ring focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="relative" ref={filterDropdownRef}>
+          <button
+            className="bg-gray-700 p-2 rounded-lg flex items-center gap-2"
+            onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+          >
+            <Filter size={18} />
+            <span className="hidden sm:inline">
+              {filterOptions.find((option) => option.value === activeFilter)
+                ?.label || "Filter"}
+            </span>
+          </button>
+
+          {isFilterDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-10">
+              {filterOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className="p-3 hover:bg-gray-700 cursor-pointer flex items-center justify-between"
+                  onClick={() => handleFilterChange(option.value)}
+                >
+                  <span>{option.label}</span>
+                  {activeFilter === option.value && (
+                    <CheckCircle size={16} className="text-green-400" />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      {(searchQuery || activeFilter !== "all") && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {searchQuery && (
+            <div className="bg-blue-800 text-sm px-3 py-1 rounded-full flex items-center gap-1">
+              <span>Search: {searchQuery}</span>
+              <button onClick={clearSearch} className="ml-1">
+                <X size={14} />
+              </button>
+            </div>
+          )}
+          {activeFilter !== "all" && (
+            <div className="bg-purple-800 text-sm px-3 py-1 rounded-full flex items-center gap-1">
+              <span>
+                Filter:{" "}
+                {
+                  filterOptions.find((option) => option.value === activeFilter)
+                    ?.label
+                }
+              </span>
+              <button
+                onClick={() => handleFilterChange("all")}
+                className="ml-1"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
+          <div className="text-gray-400 text-sm flex items-center">
+            <span>{filteredCampaigns?.length || 0} results</span>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {campaigns && campaigns.length > 0 ? (
-          campaigns.map((campaign) => {
+        {filteredCampaigns && filteredCampaigns.length > 0 ? (
+          filteredCampaigns.map((campaign) => {
             const isActive = new Date(campaign.endDate) >= new Date();
             return (
               <div
@@ -265,7 +403,9 @@ const Campaigns = () => {
           })
         ) : (
           <p className="col-span-full text-center text-gray-400">
-            No campaigns found.
+            {searchQuery || activeFilter !== "all"
+              ? "No campaigns match your search or filter criteria."
+              : "No campaigns found."}
           </p>
         )}
       </div>

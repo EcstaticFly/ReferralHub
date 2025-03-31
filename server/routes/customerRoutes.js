@@ -3,7 +3,7 @@ import { verifyjwt } from "../middlewares/checkAuth.js";
 import { importCustomers, getCustomers } from "../controllers/customerController.js";
 import multer from "multer";
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 

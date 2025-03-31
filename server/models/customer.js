@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const customerSchema = new mongoose.Schema({
   businessId: { type: mongoose.Schema.Types.ObjectId, ref: "Business", required: true },
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
   phone: { type: String },
   referralCode: { type: String, unique: true, sparse: true }, 
   referredBy: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", default: null, sparse: true }, 
