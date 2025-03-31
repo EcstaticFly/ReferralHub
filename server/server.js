@@ -42,6 +42,9 @@ app.use(express.urlencoded({ limit: "2mb", extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
 
 app.use("/api/business", businessRoutes);
 app.use("/api/campaign", campaignRoutes);
