@@ -34,23 +34,24 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           <div>
-            {/* <label className="block text-gray-700 dark:text-gray-300">Email</label> */}
             <input
               type="email"
               className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-400"
               placeholder="Enter your email"
+              autoComplete="off"
+              autoFocus="true"
               value={formData.email}
               onChange={(event) => setFormData({ ...formData, email: event.target.value })}
             />
           </div>
 
           <div>
-            {/* <label className="block text-gray-700 dark:text-gray-300">Password</label> */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-400"
                 placeholder="Enter your password"
+                autoComplete="off"
                 value={formData.password}
                 onChange={(event) => setFormData({ ...formData, password: event.target.value })}
               />
@@ -72,7 +73,7 @@ export default function LoginPage() {
             {isLoggingIn ? (
               <>
                 <Loader className="size-5 animate-spin" />
-                <span>Loading...</span>
+                <span>Logging In...</span>
               </>
             ) : (
               "Login"

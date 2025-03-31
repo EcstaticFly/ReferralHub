@@ -81,6 +81,7 @@ export default function RegisterPage() {
               placeholder="Business Name"
               className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-400"
               value={formData.fullName}
+              autoFocus="true"
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             />
           </div>
@@ -127,6 +128,7 @@ export default function RegisterPage() {
               placeholder="Password"
               className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-400"
               value={formData.password}
+              autoComplete="off"
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
             <button

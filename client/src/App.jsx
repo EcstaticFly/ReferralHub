@@ -5,7 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import HomePage from "./pages/Home.jsx";
 import RegisterPage from "./pages/Register.jsx";
 import LoginPage from "./pages/Login.jsx";
-import ReferralPage from "./pages/ReferralPage.jsx";
+import ReferralPage from "./pages/Referral.jsx";
 
 function App() {
   const { user, checkAuth, isLoading } = authStore();
