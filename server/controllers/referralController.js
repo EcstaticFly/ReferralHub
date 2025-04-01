@@ -8,16 +8,16 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-const CORS_ORIGIN=process.env.CORS_ORIGIN || "*";
+const CLIENT_BASE_URL=process.env.CLIENT_BASE_URL;
 
 const generateUniqueReferralCode = async () => {
   let referralCode;
   let exists = true;
 
   while (exists) {
-    referralCode = crypto.randomBytes(4).toString("hex"); // Generates an 8-character code
+    referralCode = crypto.randomBytes(4).toString("hex");
     const existingCustomer = await Customer.findOne({ referralCode });
-    exists = !!existingCustomer; // If found, keep generating
+    exists = !!existingCustomer;
   }
 
   return referralCode;
@@ -55,12 +55,11 @@ export const sendReferralBulk = async (req, res) => {
 
         const savedReferral = await newReferral.save();
 
-        // Update referralsSent count for the customer
         await Customer.findByIdAndUpdate(customer._id, {
           $inc: { referralsSent: 1 },
         });
 
-        const updatedReferralLink = `${CORS_ORIGIN}/referral?task=${encodeURIComponent(
+        const updatedReferralLink = `${CLIENT_BASE_URL}/referral?task=${encodeURIComponent(
           campaign.task
         )}&code=${encodeURIComponent(
           referralCode
@@ -154,7 +153,6 @@ export const updateReferralStatus = async (req, res) => {
       const savedReward = await reward.save();
       console.log("Reward created successfully:", savedReward);
 
-      // Update rewardsEarned for the referrer
       const rewardIncrement = updatedReferral.rewardValue / 100;
       await Customer.findByIdAndUpdate(updatedReferral.referrerId, {
         $inc: { rewardsEarned: rewardIncrement },
