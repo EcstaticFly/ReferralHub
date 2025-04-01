@@ -17,12 +17,11 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-
-const CLIENT_ORIGIN = process.env.CORS_ORIGIN;
+connectDB();
 
 app.use(
   cors({
-    origin: CLIENT_ORIGIN,
+    origin: process.env.CLIENT_BASE_URL,
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
@@ -56,5 +55,4 @@ app.use("/api/chat", chatRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is now running on port ${PORT}`);
-  connectDB();
 });

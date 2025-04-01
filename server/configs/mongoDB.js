@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
     try {
-        const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URL}`)
+        const connectionInstance = await mongoose.connect(`${process.env.REACT_MONGODB_URL}`)
         console.log(`\nMongoDB connected !! DB HOST: ${connectionInstance.connection.host},`);
         
     } catch (error) {
