@@ -27,8 +27,7 @@ export const loginUser = async (req, res) => {
         id: business._id,
         name: business.name,
         email: business.email,
-        customers: business.customers, // Now includes customers
-        campaigns: business.campaigns, // Now includes campaigns
+        businessType: business.businessType,
       },
     });
     
@@ -58,11 +57,13 @@ export const registerUser = async (req, res) => {
       await generateToken(newBusiness._id, res);
       await newBusiness.save();
       return res.status(201).json({
-        _id: newBusiness._id,
-        email: newBusiness.email,
-        businessType: newBusiness.businessType,
-        name: newBusiness.name,
-        message: "Account created successfully",
+        message: "Account Created successfully",
+        business: {
+          id: newBusiness._id,
+          name: newBusiness.name,
+          email: newBusiness.email,
+          businessType: newBusiness.businessType,
+        },
       });
     } else {
       return res.status(400).json({ message: "Invalid user data" });

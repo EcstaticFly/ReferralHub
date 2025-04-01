@@ -24,7 +24,7 @@ export const authStore = create((set, get) => ({
     set({ isRegistering: true });
     try {
       const response = await axiosInstance.post("/business/register", formData);
-      set({ user: response.data });
+      set({ user: response.data.business });
       toast.success(response.data.message);
     } catch (e) {
       console.log(e);
@@ -38,7 +38,7 @@ export const authStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const response = await axiosInstance.post("/business/login", formData);
-      set({ user: response.data });
+      set({ user: response.data.business });
       toast.success(response.data.message);
     } catch (e) {
       console.log(e);
