@@ -77,7 +77,13 @@ export const registerUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
-    res.cookie("token", "", { maxAge: 0 });
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 0,
+      path: "/"
+    });
     res.json({ message: "Logout successful" });
   } catch (e) {
     console.log(e.message);

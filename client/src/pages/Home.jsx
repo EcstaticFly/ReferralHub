@@ -12,9 +12,8 @@ import {
 import Dashboard from "../components/Dashboard";
 import Campaigns from "../components/Campaigns";
 import Customers from "../components/Customers";
-import Chatbot from "../components/Chatbot"; // Import our new Chatbot component
+import Chatbot from "../components/Chatbot";
 import { authStore } from "../store/authStore";
-import { AnimatePresence, motion } from "framer-motion";
 
 const menuItems = [
   {
@@ -139,8 +138,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      
-      {/* Chatbot toggle button */}
+
       <button
         onClick={() => setIsChatbotOpen(!isChatbotOpen)}
         className="
@@ -149,13 +147,12 @@ const HomePage = () => {
           p-4 rounded-full 
           shadow-2xl hover:bg-blue-700 
           transition-colors
-          z-40
+          z-40 cursor-pointer
         "
       >
         <MessageCircle size={24} />
       </button>
 
-      {/* Our new Chatbot component */}
       <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
     </div>
   );
