@@ -122,6 +122,12 @@ const userTaskInstructions = {
 const taskKeywords = {
   create_campaign: [
     "create campaign",
+    "create a campaign",
+    "make a campaign",
+    "set up a campaign",
+    "start a campaign",
+    "launch a campaign",
+    "initiate a campaign",
     "new campaign",
     "start campaign",
     "launch campaign",
@@ -133,6 +139,16 @@ const taskKeywords = {
   ],
   view_stats: [
     "view stats",
+    "view the stats",
+    "see stats",
+    "see the stats",
+    "view analytics",
+    "see analytics",
+    "view dashboard",
+    "business metrics",
+    "performance data",
+    "campaign results",
+
     "see statistics",
     "check analytics",
     "view dashboard",
@@ -146,6 +162,7 @@ const taskKeywords = {
   ],
   import_customers: [
     "import customers",
+    "import the customers",
     "add customers",
     "upload customers",
     "customer import",
